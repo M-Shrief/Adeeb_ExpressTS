@@ -47,3 +47,8 @@
 - Basic hand-made middleware for **Caching**.
 - **jsonwebtoken, Express-jwt & Express-jwt-permissions**, for authentication,
   guarding routes.
+
+### Currently working on:
+
+- Dealing with cookies and authentication better
+- Guarding routes
