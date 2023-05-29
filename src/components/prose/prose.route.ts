@@ -57,15 +57,17 @@ export class ProseRoute implements IRoute {
       validate([
         param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
 
-        body('poet').isMongoId().withMessage(ERROR_MSG.POET),
+        body('poet').optional().isMongoId().withMessage(ERROR_MSG.POET),
 
         body('tags')
+          .optional()
           .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.TAGS),
 
         body('qoute')
+          .optional()
           .isLength({ min: 4, max: 400 })
           .isString()
           .withMessage(ERROR_MSG.QOUTE),
