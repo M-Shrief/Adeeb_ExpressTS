@@ -4,6 +4,8 @@ import { Prose } from './prose.mode';
 import { ProseType } from '../../interfaces/prose.interface';
 // Utils
 import { shuffle } from '../../utils/shuffle';
+// Schema
+import { createSchema, updateSchema } from './prose.schema';
 export class ProseService {
   public async getAllWithPoetName(): Promise<ProseType[] | false> {
     const proses = await Prose.find(
@@ -39,6 +41,9 @@ export class ProseService {
   }
 
   public async post(proseData: ProseType): Promise<ProseType | false> {
+    const isValid = await createSchema.isValid(proseData);
+    if (!isValid) return false;
+
     const prose = new Prose({
       poet: proseData.poet,
       tags: proseData.tags,
@@ -55,6 +60,8 @@ export class ProseService {
     id: string,
     proseData: ProseType,
   ): Promise<ProseType | false> {
+    const isValid = await updateSchema.isValid(proseData);
+    if (!isValid) return false;
     const prose = await Prose.findById(id);
     if (!prose) return false;
     const newProse = await prose.updateOne({ $set: proseData });
