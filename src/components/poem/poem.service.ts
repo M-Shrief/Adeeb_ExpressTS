@@ -2,6 +2,8 @@
 import { Poem } from './poem.model';
 // Types
 import { PoemType } from '../../interfaces/poem.interface';
+// Schema
+import { createSchema, updateSchema } from './poem.schema';
 export class PoemService {
   public async getAllWithPoetName(): Promise<PoemType[] | false> {
     const poems = await Poem.find(
@@ -35,6 +37,9 @@ export class PoemService {
   }
 
   public async post(poemData: PoemType): Promise<PoemType | false> {
+    const isValid = await createSchema.isValid(poemData);
+    if (!isValid) return false;
+
     const poem = new Poem({
       intro: poemData.intro,
       poet: poemData.poet,
@@ -50,6 +55,9 @@ export class PoemService {
     id: string,
     poemData: PoemType,
   ): Promise<PoemType | false> {
+    const isValid = await updateSchema.isValid(poemData);
+    if (!isValid) return false;
+
     const poem = await Poem.findById(id);
     if (!poem) return false;
     const newPoem = await poem.updateOne({ $set: poemData });
