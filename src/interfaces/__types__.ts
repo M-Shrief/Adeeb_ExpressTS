@@ -18,14 +18,12 @@ export interface Print {
   sec?: string;
 }
 export interface Product {
-  _id: string;
   print: Print;
   fontType: string;
   fontColor: string;
   backgroundColor: string;
 }
 export interface ProductGroup {
-  _id: string;
   prints: Print[];
   fontType: string;
   fontColor: string;
