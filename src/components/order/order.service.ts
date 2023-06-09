@@ -1,6 +1,9 @@
-import { OrderType } from '../../interfaces/order.interface';
+// Models
 import { Order } from './order.model';
-
+// Types
+import { OrderType } from '../../interfaces/order.interface';
+// Schema
+import { createSchema, updateSchema } from './order.schema';
 export class OrderService {
   public async getGuestOrders(
     name: string,
@@ -32,27 +35,17 @@ export class OrderService {
   }
 
   public async post(orderData: OrderType): Promise<OrderType | false> {
-    let order;
-    if (orderData.partner) {
-      order = new Order({
-        partner: orderData.partner,
-        name: orderData.name,
-        phone: orderData.phone,
-        address: orderData.address,
-        reviewed: orderData.reviewed,
-        completed: orderData.completed,
-        products: orderData.products,
-      });
-    } else {
-      order = new Order({
-        name: orderData.name,
-        phone: orderData.phone,
-        address: orderData.address,
-        reviewed: orderData.reviewed,
-        completed: orderData.completed,
-        products: orderData.products,
-      });
-    }
+    const isValid = await createSchema.isValid(orderData);
+    if (!isValid) return false;
+    const order = new Order();
+    if (orderData.partner) order.partner = orderData.partner;
+
+    order.name = orderData.name;
+    order.phone = orderData.phone;
+    order.address = orderData.address;
+    order.reviewed = orderData.reviewed;
+    order.completed = orderData.completed;
+    order.products = orderData.products;
 
     const newOrder = await order.save();
     if (!newOrder) return false;
@@ -63,12 +56,13 @@ export class OrderService {
     id: string,
     orderData: OrderType,
   ): Promise<OrderType | false> {
+    const isValid = await updateSchema.isValid(orderData);
+    if (!isValid) return false;
     const order = await Order.findById(id);
     if (!order) return false;
     const newOrder = await order.updateOne({ $set: orderData });
     if (!newOrder) return false;
-    // return newOrder;
-    return order;
+    return newOrder;
   }
 
   public async remove(id: string): Promise<OrderType | false> {
