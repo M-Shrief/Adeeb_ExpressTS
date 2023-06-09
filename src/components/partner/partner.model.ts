@@ -8,7 +8,7 @@ const partnerSchema = new Schema(
     name: {
       type: String,
       required: true,
-      maxlength: 100,
+      maxlength: 50,
     },
     phone: {
       type: String,

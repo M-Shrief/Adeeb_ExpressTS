@@ -4,7 +4,8 @@ import Partner from './partner.model';
 import { PartnerType } from '../../interfaces/partner.interface';
 // Utils
 import { comparePassword, hashPassword } from '../../utils/auth';
-
+// Schema
+import { createSchema, updateSchema } from './partner.schema';
 export class PartnerService {
   public async getInfo(id: string): Promise<PartnerType | false> {
     const partner = await Partner.findById(id, {
@@ -18,6 +19,8 @@ export class PartnerService {
   }
 
   public async signup(partnerData: PartnerType): Promise<PartnerType | false> {
+    const isValid = await createSchema.isValid(partnerData);
+    if (!isValid) return false;
     const password = await hashPassword(partnerData.password);
 
     const partner = new Partner({
@@ -52,6 +55,8 @@ export class PartnerService {
     id: string,
     partnerData: PartnerType,
   ): Promise<PartnerType | false> {
+    const isValid = await updateSchema.isValid(partnerData);
+    if (!isValid) return false;
     const partner = await Partner.findById(id);
     if (!partner) return false;
     const newPartner = await partner.updateOne({ $set: partnerData });
