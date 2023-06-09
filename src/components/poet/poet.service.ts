@@ -5,6 +5,8 @@ import { ChosenVerse } from '../chosenVerse/chosenVerse.model';
 import { Prose } from '../prose/prose.mode';
 // Types
 import { PoetType } from '../../interfaces/poet.interface';
+// Schema
+import { createSchema, updateSchema } from './poet.schema';
 export class PoetService {
   public async getAll(): Promise<PoetType['details'][] | false> {
     const poets = await Poet.find({}, { name: 1, time_period: 1 });
@@ -33,13 +35,16 @@ export class PoetService {
   }
 
   public async post(
-    peotData: PoetType['details'],
+    poetData: PoetType['details'],
   ): Promise<PoetType['details'] | false> {
+    const isValid = await createSchema.isValid(poetData);
+    if (!isValid) return false;
+
     const poet = new Poet({
-      name: peotData.name,
-      time_period: peotData.time_period,
-      bio: peotData.bio,
-      reviewed: peotData.reviewed,
+      name: poetData.name,
+      time_period: poetData.time_period,
+      bio: poetData.bio,
+      reviewed: poetData.reviewed,
     });
     const newPoet = await poet.save();
     if (!newPoet) return false;
@@ -50,6 +55,8 @@ export class PoetService {
     id: string,
     poetData: PoetType['details'],
   ): Promise<PoetType['details'] | false> {
+    const isValid = await updateSchema.isValid(poetData);
+    if (!isValid) return false;
     const poet = await Poet.findById(id);
     if (!poet) return false;
     const newPoet = await poet.updateOne({ $set: poetData });

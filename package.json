@@ -30,7 +30,8 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.1.0",
     "morgan": "^1.10.0",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
