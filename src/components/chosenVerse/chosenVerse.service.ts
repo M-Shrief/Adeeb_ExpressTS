@@ -4,6 +4,8 @@ import { ChosenVerse } from './chosenVerse.model';
 import { ChosenVerseType } from '../../interfaces/chosenVerse.interface';
 // Utils
 import { shuffle } from '../../utils/shuffle';
+//Schema
+import { createSchema, updateSchema } from './chosenVerse.schema';
 export class ChosenVerseService {
   public async getAllWithPoetName(): Promise<ChosenVerseType[] | false> {
     const chosenVerses = await ChosenVerse.find(
@@ -44,6 +46,9 @@ export class ChosenVerseService {
   public async post(
     chosenVerseData: ChosenVerseType,
   ): Promise<ChosenVerseType | false> {
+    const isValid = await createSchema.isValid(chosenVerseData);
+    if (!isValid) return false;
+
     const chosenVerse = new ChosenVerse({
       poet: chosenVerseData.poet,
       poem: chosenVerseData.poem,
@@ -60,6 +65,8 @@ export class ChosenVerseService {
     id: string,
     chosenVerseData: ChosenVerseType,
   ): Promise<ChosenVerseType | false> {
+    const isValid = await updateSchema.isValid(chosenVerseData);
+    if (!isValid) return false;
     const chosenVerse = await ChosenVerse.findById(id);
     if (!chosenVerse) return false;
     const newChosenVerse = await chosenVerse.updateOne({
