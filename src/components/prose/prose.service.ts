@@ -22,7 +22,9 @@ export class ProseService {
   ): Promise<ProseType[] | false> {
     const proses = await Prose.aggregate([
       { $sample: { size: num } },
-      { $unset: ['_id', 'updatedAt', 'createdAt'] },
+      {
+        $unset: ['updatedAt', 'createdAt', 'tags', 'poet', 'reviewed', '__v'],
+      },
     ]);
     if (proses.length === 0) return false;
     return proses;

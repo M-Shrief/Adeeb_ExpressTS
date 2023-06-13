@@ -22,7 +22,17 @@ export class ChosenVerseService {
   ): Promise<ChosenVerseType[] | false> {
     const chosenVerses = await ChosenVerse.aggregate([
       { $sample: { size: num } },
-      { $unset: ['_id', 'updatedAt', 'createdAt'] },
+      {
+        $unset: [
+          'updatedAt',
+          'createdAt',
+          'tags',
+          'poet',
+          'poem',
+          'reviewed',
+          '__v',
+        ],
+      },
     ]);
 
     if (chosenVerses.length === 0) return false;
