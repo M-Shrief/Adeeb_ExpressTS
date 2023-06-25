@@ -1,11 +1,12 @@
 import { object, string, array } from 'yup';
 
-export const uuidSchema = string().uuid();
+export const uuidSchema = string().length(24);
 
 export const introSchema = string().min(4).max(50);
 
 export const versesSchema = array().of(
   object().shape({
+    // _id: uuidSchema.optional(),
     first: string().min(4).max(50).required(),
     sec: string().min(4).max(50).required(),
   }),
@@ -26,6 +27,7 @@ const Time_Period = [
   'أندلسي',
   'عثماني ومملوكي',
   'متأخر وحديث',
+  'القرن العشرين',
 ];
 export const timePeriodSchema = string().oneOf(Time_Period);
 

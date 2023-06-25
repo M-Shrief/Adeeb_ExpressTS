@@ -1,5 +1,5 @@
 // Models
-import { Prose } from './prose.mode';
+import { Prose } from './prose.model';
 // Types
 import { ProseType } from '../../interfaces/prose.interface';
 // Utils

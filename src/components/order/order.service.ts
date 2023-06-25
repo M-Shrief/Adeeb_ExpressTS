@@ -4,6 +4,7 @@ import { Order } from './order.model';
 import { OrderType } from '../../interfaces/order.interface';
 // Schema
 import { createSchema, updateSchema } from './order.schema';
+import { logger } from '../../utils/logger';
 export class OrderService {
   public async getGuestOrders(
     name: string,
@@ -11,7 +12,15 @@ export class OrderService {
   ): Promise<OrderType[] | false> {
     const orders = await Order.find(
       { name, phone },
-      { name: 1, phone: 1, address: 1, reviewed: 1, completed: 1, products: 1 },
+      {
+        name: 1,
+        phone: 1,
+        address: 1,
+        reviewed: 1,
+        completed: 1,
+        products: 1,
+        createdAt: 1,
+      },
     );
     if (orders.length === 0) return false;
     return orders;
@@ -28,6 +37,7 @@ export class OrderService {
         reviewed: 1,
         completed: 1,
         products: 1,
+        createdAt: 1,
       },
     );
     if (orders.length === 0) return false;

@@ -2,7 +2,7 @@
 import { Poet } from './poet.model';
 import { Poem } from '../poem/poem.model';
 import { ChosenVerse } from '../chosenVerse/chosenVerse.model';
-import { Prose } from '../prose/prose.mode';
+import { Prose } from '../prose/prose.model';
 // Types
 import { PoetType } from '../../interfaces/poet.interface';
 // Schema
