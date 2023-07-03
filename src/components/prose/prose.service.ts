@@ -4,8 +4,9 @@ import { Prose } from './prose.model';
 import { ProseType } from '../../interfaces/prose.interface';
 // Utils
 import { shuffle } from '../../utils/shuffle';
-// Schema
 import { createSchema, updateSchema } from './prose.schema';
+// Schema
+import { filterAsync } from '../../utils/asyncFilterAndMap';
 export class ProseService {
   public async getAllWithPoetName(): Promise<ProseType[] | false> {
     const proses = await Prose.find(
@@ -61,20 +62,18 @@ export class ProseService {
   public async postMany(
     prosesData: ProseType[],
   ): Promise<{newProses: ProseType[], nonValidProses: ProseType[]} | false> {
-    let validProses: ProseType[] = [], nonValidProses: ProseType[] = [];
 
-    prosesData.forEach(async (proseData, index) =>  {
-      let isValid = await createSchema.isValid(proseData)
-      if(isValid && index <= 10) {
-        validProses.push(proseData);
-      } else {
-      nonValidProses.push(proseData);
-      }
-    });
+    const isValid = async (proseData: ProseType) => await createSchema.isValid(proseData);
+    const isNotValid = async (proseData: ProseType) => await createSchema.isValid(proseData) === false;
+
+
+    const validProses: ProseType[]  =  await filterAsync(prosesData, isValid)
+    const nonValidProses: ProseType[]  =  await filterAsync(prosesData, isNotValid)
 
     const newProses = await Prose.insertMany(validProses, {limit: 10});
-    const results = {newProses, nonValidProses}
     if (newProses.length == 0) return false;
+
+    const results = {newProses, nonValidProses}
     return results;
   }
 
