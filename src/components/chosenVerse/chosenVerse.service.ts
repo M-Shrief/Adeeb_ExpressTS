@@ -4,6 +4,7 @@ import { ChosenVerse } from './chosenVerse.model';
 import { ChosenVerseType } from '../../interfaces/chosenVerse.interface';
 // Utils
 import { shuffle } from '../../utils/shuffle';
+import { filterAsync } from '../../utils/asyncFilterAndMap';
 //Schema
 import { createSchema, updateSchema } from './chosenVerse.schema';
 export class ChosenVerseService {
@@ -74,20 +75,17 @@ export class ChosenVerseService {
   public async postMany(
     chosenVersesData: ChosenVerseType[],
   ): Promise<{newChosenVerses: ChosenVerseType[], nonValidChosenVerses: ChosenVerseType[]} | false> {
-    let validChosenVerses: ChosenVerseType[] = [], nonValidChosenVerses: ChosenVerseType[] = [];
 
-    chosenVersesData.forEach(async (chosenVerseData, index) =>  {
-      let isValid = await createSchema.isValid(chosenVerseData)
-      if(isValid && index <= 10) {
-        validChosenVerses.push(chosenVerseData);
-      } else {
-      nonValidChosenVerses.push(chosenVerseData);
-      }
-    });
+    let isValid = async (chosenVerseData: any) => await createSchema.isValid(chosenVerseData)
+    let isNotValid = async (chosenVerseData: any) => await createSchema.isValid(chosenVerseData) === false
+
+    const validChosenVerses: ChosenVerseType[]  =  await filterAsync(chosenVersesData, isValid)
+    const nonValidChosenVerses: ChosenVerseType[]  =  await filterAsync(chosenVersesData, isNotValid)
 
     const newChosenVerses = await ChosenVerse.insertMany(validChosenVerses, {limit: 10});
-    const results = {newChosenVerses, nonValidChosenVerses}
     if (newChosenVerses.length == 0) return false;
+
+    const results = {newChosenVerses, nonValidChosenVerses}
     return results;
   }
 
