@@ -71,6 +71,27 @@ export class ChosenVerseService {
     return newChosenVerse;
   }
 
+  public async postMany(
+    chosenVersesData: ChosenVerseType[],
+  ): Promise<{newChosenVerses: ChosenVerseType[], nonValidChosenVerses: ChosenVerseType[]} | false> {
+    let validChosenVerses: ChosenVerseType[] = [], nonValidChosenVerses: ChosenVerseType[] = [];
+
+    chosenVersesData.forEach(async (chosenVerseData, index) =>  {
+      let isValid = await createSchema.isValid(chosenVerseData)
+      if(isValid && index <= 10) {
+        validChosenVerses.push(chosenVerseData);
+      } else {
+      nonValidChosenVerses.push(chosenVerseData);
+      }
+    });
+
+    const newChosenVerses = await ChosenVerse.insertMany(validChosenVerses, {limit: 10});
+    const results = {newChosenVerses, nonValidChosenVerses}
+    if (newChosenVerses.length == 0) return false;
+    // return newChosenVerses;
+    return results;
+  }
+
   public async update(
     id: string,
     chosenVerseData: ChosenVerseType,

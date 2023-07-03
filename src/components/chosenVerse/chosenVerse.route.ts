@@ -59,6 +59,8 @@ export class ChosenVerseRoute implements IRoute {
       ]),
       this.controller.post,
     );
+    this.router.post('/chosenverses', this.controller.postMany);
+
     this.router.put(
       '/chosenverse/:id',
       validate([
