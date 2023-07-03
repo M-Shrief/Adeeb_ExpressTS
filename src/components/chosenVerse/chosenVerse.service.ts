@@ -76,8 +76,9 @@ export class ChosenVerseService {
     chosenVersesData: ChosenVerseType[],
   ): Promise<{newChosenVerses: ChosenVerseType[], nonValidChosenVerses: ChosenVerseType[]} | false> {
 
-    let isValid = async (chosenVerseData: any) => await createSchema.isValid(chosenVerseData)
-    let isNotValid = async (chosenVerseData: any) => await createSchema.isValid(chosenVerseData) === false
+    const isValid = async (chosenVerseData: ChosenVerseType) => await createSchema.isValid(chosenVerseData);
+    const isNotValid = async (chosenVerseData: ChosenVerseType) => await createSchema.isValid(chosenVerseData) === false;
+
 
     const validChosenVerses: ChosenVerseType[]  =  await filterAsync(chosenVersesData, isValid)
     const nonValidChosenVerses: ChosenVerseType[]  =  await filterAsync(chosenVersesData, isNotValid)
