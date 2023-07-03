@@ -88,7 +88,6 @@ export class ChosenVerseService {
     const newChosenVerses = await ChosenVerse.insertMany(validChosenVerses, {limit: 10});
     const results = {newChosenVerses, nonValidChosenVerses}
     if (newChosenVerses.length == 0) return false;
-    // return newChosenVerses;
     return results;
   }
 

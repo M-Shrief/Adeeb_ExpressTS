@@ -80,6 +80,23 @@ export class PoemController {
     }
   };
 
+  public postMany = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const poems = await this.poemService.postMany(
+        req.body as PoemType[],
+      );
+      if (!poems)
+        throw new AppError(
+          HttpStatusCode.NOT_ACCEPTABLE,
+          ERROR_MSG.NOT_VALID,
+          true,
+        );
+      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, poems});
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const poem = await this.poemService.update(

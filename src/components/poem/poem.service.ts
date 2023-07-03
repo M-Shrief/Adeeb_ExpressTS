@@ -51,6 +51,26 @@ export class PoemService {
     return newPoem;
   }
 
+  public async postMany(
+    poemsData: PoemType[],
+  ): Promise<{newPoems: PoemType[], nonValidPoems: PoemType[]} | false> {
+    let validPoems: PoemType[] = [], nonValidPoems: PoemType[] = [];
+
+    poemsData.forEach(async (poemData, index) =>  {
+      let isValid = await createSchema.isValid(poemData)
+      if(isValid && index <= 10) {
+        validPoems.push(poemData);
+      } else {
+        nonValidPoems.push(poemData);
+      }
+    });
+
+    const newPoems = await Poem.insertMany(validPoems, {limit: 10});
+    const results = {newPoems, nonValidPoems}
+    if (newPoems.length == 0) return false;
+    return results;
+  }
+
   public async update(
     id: string,
     poemData: PoemType,
