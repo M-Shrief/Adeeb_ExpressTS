@@ -4,6 +4,8 @@ import { Poem } from './poem.model';
 import { PoemType } from '../../interfaces/poem.interface';
 // Schema
 import { createSchema, updateSchema } from './poem.schema';
+// Utils
+import { filterAsync } from '../../utils/asyncFilterAndMap';
 export class PoemService {
   public async getAllWithPoetName(): Promise<PoemType[] | false> {
     const poems = await Poem.find(
@@ -54,20 +56,18 @@ export class PoemService {
   public async postMany(
     poemsData: PoemType[],
   ): Promise<{newPoems: PoemType[], nonValidPoems: PoemType[]} | false> {
-    let validPoems: PoemType[] = [], nonValidPoems: PoemType[] = [];
 
-    poemsData.forEach(async (poemData, index) =>  {
-      let isValid = await createSchema.isValid(poemData)
-      if(isValid && index <= 10) {
-        validPoems.push(poemData);
-      } else {
-        nonValidPoems.push(poemData);
-      }
-    });
+    const isValid = async (poemData: PoemType) => await createSchema.isValid(poemData);
+    const isNotValid = async (poemData: PoemType) => await createSchema.isValid(poemData) === false;
+
+
+    const validPoems: PoemType[]  =  await filterAsync(poemsData, isValid)
+    const nonValidPoems: PoemType[]  =  await filterAsync(poemsData, isNotValid)
 
     const newPoems = await Poem.insertMany(validPoems, {limit: 10});
-    const results = {newPoems, nonValidPoems}
     if (newPoems.length == 0) return false;
+
+    const results = {newPoems, nonValidPoems}
     return results;
   }
 
