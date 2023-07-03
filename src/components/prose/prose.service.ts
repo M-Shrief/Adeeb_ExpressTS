@@ -58,6 +58,26 @@ export class ProseService {
     return newProse;
   }
 
+  public async postMany(
+    prosesData: ProseType[],
+  ): Promise<{newProses: ProseType[], nonValidProses: ProseType[]} | false> {
+    let validProses: ProseType[] = [], nonValidProses: ProseType[] = [];
+
+    prosesData.forEach(async (proseData, index) =>  {
+      let isValid = await createSchema.isValid(proseData)
+      if(isValid && index <= 10) {
+        validProses.push(proseData);
+      } else {
+      nonValidProses.push(proseData);
+      }
+    });
+
+    const newProses = await Prose.insertMany(validProses, {limit: 10});
+    const results = {newProses, nonValidProses}
+    if (newProses.length == 0) return false;
+    return results;
+  }
+
   public async update(
     id: string,
     proseData: ProseType,

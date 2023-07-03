@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 // Services
 import { ProseService } from './prose.service';
 // Types
-import { ERROR_MSG } from '../../interfaces/prose.interface';
+import { ERROR_MSG, ProseType } from '../../interfaces/prose.interface';
 // Utils
 import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
@@ -79,6 +79,23 @@ export class ProseController {
       res.status(HttpStatusCode.CREATED).send(prose);
     } catch (errors) {
       next(errors);
+    }
+  };
+
+  public postMany = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const proses = await this.proseService.postMany(
+        req.body as ProseType[],
+      );
+      if (!proses)
+        throw new AppError(
+          HttpStatusCode.NOT_ACCEPTABLE,
+          ERROR_MSG.NOT_VALID,
+          true,
+        );
+      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, proses});
+    } catch (error) {
+      next(error);
     }
   };
 
