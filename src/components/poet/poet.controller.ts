@@ -56,6 +56,23 @@ export class PoetController {
     }
   };
 
+  public postMany = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const poets = await this.poetService.postMany(
+        req.body as PoetType['details'][],
+      );
+      if (!poets)
+        throw new AppError(
+          HttpStatusCode.NOT_ACCEPTABLE,
+          ERROR_MSG.NOT_VALID,
+          true,
+        );
+      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, poets});
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const poet = await this.poetService.update(req.params.id, req.body);
