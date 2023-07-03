@@ -7,6 +7,8 @@ import { Prose } from '../prose/prose.model';
 import { PoetType } from '../../interfaces/poet.interface';
 // Schema
 import { createSchema, updateSchema } from './poet.schema';
+// Utils
+import { filterAsync } from '../../utils/asyncFilterAndMap';
 export class PoetService {
   public async getAll(): Promise<PoetType['details'][] | false> {
     const poets = await Poet.find({}, { name: 1, time_period: 1 });
@@ -53,23 +55,21 @@ export class PoetService {
 
   public async postMany(
     poetsData: PoetType['details'][],
-  ): Promise<{newPoets: PoetType['details'][], nonValidPoets: PoetType['details'][]} | false> {
-    let validPoets: PoetType['details'][] = [], nonValidPoets: PoetType['details'][] = [];
+    ): Promise<{newPoets: PoetType['details'][], nonValidPoets: PoetType['details'][]} | false> {
 
-    poetsData.forEach(async (poetData, index) =>  {
-      let isValid = await createSchema.isValid(poetData)
-      if(isValid && index <= 10) {
-        validPoets.push(poetData);
-      } else {
-      nonValidPoets.push(poetData);
-      }
-    });
-
-    const newPoets = await Poet.insertMany(validPoets, {limit: 10});
-    const results = {newPoets, nonValidPoets}
-    if (newPoets.length == 0) return false;
-    return results;
-  }
+      const isValid = async (poetData: PoetType['details']) => await createSchema.isValid(poetData);
+      const isNotValid = async (poetData: PoetType['details']) => await createSchema.isValid(poetData) === false;
+  
+  
+      const validPoets: PoetType['details'][]  =  await filterAsync(poetsData, isValid)
+      const nonValidPoets: PoetType['details'][]  =  await filterAsync(poetsData, isNotValid)
+  
+      const newPoets = await Poet.insertMany(validPoets, {limit: 10});
+      if (newPoets.length == 0) return false;
+  
+      const results = {newPoets, nonValidPoets}
+      return results;
+    }
 
   public async update(
     id: string,
