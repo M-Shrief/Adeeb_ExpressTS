@@ -1,3 +1,5 @@
+// Redis
+import redisClient  from '../../redis'
 // Models
 import { Poet } from './poet.model';
 import { Poem } from '../poem/poem.model';
@@ -9,15 +11,33 @@ import { PoetType } from '../../interfaces/poet.interface';
 import { createSchema, updateSchema } from './poet.schema';
 // Utils
 import { filterAsync } from '../../utils/asyncFilterAndMap';
+import { logger } from '../../utils/logger';
 export class PoetService {
-  public async getAll(): Promise<PoetType['details'][] | false> {
-    const poets = await Poet.find({}, { name: 1, time_period: 1 });
+  public async getAll(): Promise<{isCached: boolean, poets: PoetType['details'][]} | false> {
+    let poets: PoetType['details'][], isCached = false;
+
+    const cacheResults = await redisClient.get('poets');
+    if(cacheResults) {
+      isCached = true;
+      poets = JSON.parse(cacheResults);
+    } else {
+      poets = await Poet.find({}, { name: 1, time_period: 1 });
+      await redisClient.set('poets', JSON.stringify(poets))
+      .catch(err => logger.error(err))
+    }
+      
     if (poets.length === 0) return false;
-    return poets;
+    return {isCached, poets};
   }
 
-  public async getOneWithLiterature(id: string): Promise<PoetType | false> {
-    const [poet, authoredPoems, authoredProses, authoredChosenVerses] =
+  public async getOneWithLiterature(id: string): Promise<{isCached: boolean, poet: PoetType} | false> {
+    let poet: PoetType, isCached = false;
+    const cacheResults = await redisClient.get(id);
+    if(cacheResults) {
+      isCached = true;
+      poet = JSON.parse(cacheResults);
+    } else {
+      const [details, authoredPoems, authoredProses, authoredChosenVerses] =
       await Promise.all([
         Poet.findById(id, { name: 1, bio: 1, time_period: 1 }),
         Poem.find({ poet: id }, { intro: 1, reviewed: 1 }),
@@ -27,13 +47,13 @@ export class PoetService {
           { reviewed: 1, tags: 1, verses: 1, poem: 1 },
         ),
       ]);
-    if (!poet) return false;
-    return {
-      details: poet,
-      authoredPoems,
-      authoredProses,
-      authoredChosenVerses,
-    };
+      if (!details) return false;
+      poet = {details, authoredPoems, authoredProses, authoredChosenVerses};
+      await redisClient.set(id, JSON.stringify(poet))
+      .catch(err => logger.error(err))
+    }
+
+    return {isCached, poet};
   }
 
   public async post(
