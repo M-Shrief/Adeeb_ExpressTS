@@ -22,7 +22,7 @@ export class PoetService {
       poets = JSON.parse(cacheResults);
     } else {
       poets = await Poet.find({}, { name: 1, time_period: 1 });
-      await redisClient.set('poets', JSON.stringify(poets))
+      await redisClient.set('poets', JSON.stringify(poets),  { EX: 60*60 })
       .catch(err => logger.error(err))
     }
       
@@ -49,7 +49,7 @@ export class PoetService {
       ]);
       if (!details) return false;
       poet = {details, authoredPoems, authoredProses, authoredChosenVerses};
-      await redisClient.set(id, JSON.stringify(poet))
+      await redisClient.set(id, JSON.stringify(poet),  { EX: 60*60 })
       .catch(err => logger.error(err))
     }
 
