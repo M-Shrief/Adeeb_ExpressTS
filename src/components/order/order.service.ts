@@ -1,3 +1,5 @@
+// Redis
+import redisClient  from '../../redis';
 // Models
 import { Order } from './order.model';
 // Types
@@ -10,36 +12,67 @@ export class OrderService {
     name: string,
     phone: string,
   ): Promise<OrderType[] | false> {
-    const orders = await Order.find(
-      { name, phone },
-      {
-        name: 1,
-        phone: 1,
-        address: 1,
-        reviewed: 1,
-        completed: 1,
-        products: 1,
-        createdAt: 1,
-      },
-    );
+    let orders : OrderType[];
+    
+    const cached =  await redisClient.get(`orders:${name}:${phone}`);
+    if(cached) {
+      orders = JSON.parse(cached)
+    } else {
+      orders = await Order.find(
+        { name, phone },
+        {
+          name: 1,
+          phone: 1,
+          address: 1,
+          reviewed: 1,
+          completed: 1,
+          products: 1,
+          createdAt: 1,
+        },
+        {
+          sort: {
+            createdAt: -1
+          }
+        }
+      );
+      
+      await redisClient.set(`order:${name}:${phone}`, JSON.stringify(orders))
+      .catch(err => logger.error(err));
+    }
+
     if (orders.length === 0) return false;
     return orders;
   }
 
   public async getPartnerOrders(partner: string): Promise<OrderType[] | false> {
-    const orders = await Order.find(
-      { partner },
-      {
-        partner: 1,
-        name: 1,
-        phone: 1,
-        address: 1,
-        reviewed: 1,
-        completed: 1,
-        products: 1,
-        createdAt: 1,
-      },
-    );
+    let orders: OrderType[];
+
+    const cached = await redisClient.get(`orders:partner:${partner}`);
+    if(cached) {
+      orders = JSON.parse(cached);
+    } else {
+      orders = await Order.find(
+        { partner },
+        {
+          partner: 1,
+          name: 1,
+          phone: 1,
+          address: 1,
+          reviewed: 1,
+          completed: 1,
+          products: 1,
+          createdAt: 1,
+        },
+        {
+          sort: {
+            createdAt: -1
+          }
+        }
+      );
+      
+      await redisClient.set(`orders:partner:${partner}`, JSON.stringify(orders))
+      .catch(err => logger.error(err));
+    }
     if (orders.length === 0) return false;
     return orders;
   }
