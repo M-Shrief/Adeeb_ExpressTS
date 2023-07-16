@@ -13,29 +13,17 @@ import { createSchema, updateSchema } from './poet.schema';
 import { filterAsync } from '../../utils/asyncFilterAndMap';
 import { logger } from '../../utils/logger';
 export class PoetService {
-  public async getAll(): Promise<{isCached: boolean, poets: PoetType['details'][]} | false> {
-    let poets: PoetType['details'][], isCached = false;
-
-    const cacheResults = await redisClient.get('poets');
-    if(cacheResults) {
-      isCached = true;
-      poets = JSON.parse(cacheResults);
-    } else {
-      poets = await Poet.find({}, { name: 1, time_period: 1 });
-      await redisClient.set('poets', JSON.stringify(poets),  { EX: 60*60 })
-      .catch(err => logger.error(err))
-    }
-      
+  public async getAll(): Promise<PoetType['details'][] | false> {
+    const poets = await Poet.find({}, { name: 1, time_period: 1 });      
     if (poets.length === 0) return false;
-    return {isCached, poets};
+    return poets;
   }
 
-  public async getOneWithLiterature(id: string): Promise<{isCached: boolean, poet: PoetType} | false> {
-    let poet: PoetType, isCached = false;
-    const cacheResults = await redisClient.get(`poet:${id}`);
-    if(cacheResults) {
-      isCached = true;
-      poet = JSON.parse(cacheResults);
+  public async getOneWithLiterature(id: string): Promise<PoetType | false> {
+    let poet: PoetType;
+    const cached = await redisClient.get(`poet:${id}`);
+    if(cached) {
+      poet = JSON.parse(cached);
     } else {
       const [details, poems, proses, chosenVerses] =
       await Promise.all([
@@ -47,13 +35,15 @@ export class PoetService {
           { reviewed: 1, tags: 1, verses: 1, poem: 1 },
         ),
       ]);
+      // check if Poet exists, not checking for his Poems,... because it'll be an empty Array.
       if (!details) return false;
+
       poet = {details, poems, proses, chosenVerses};
-      await redisClient.set(`poet:${id}`, JSON.stringify(poet),  { EX: 60*60 })
+      await redisClient.set(`poet:${id}`, JSON.stringify(poet),  { EX: 60*15 })
       .catch(err => logger.error(err))
     }
 
-    return {isCached, poet};
+    return poet;
   }
 
   public async post(
