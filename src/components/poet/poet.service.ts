@@ -37,7 +37,7 @@ export class PoetService {
       isCached = true;
       poet = JSON.parse(cacheResults);
     } else {
-      const [details, authoredPoems, authoredProses, authoredChosenVerses] =
+      const [details, poems, proses, chosenVerses] =
       await Promise.all([
         Poet.findById(id, { name: 1, bio: 1, time_period: 1 }),
         Poem.find({ poet: id }, { intro: 1, reviewed: 1 }),
@@ -48,7 +48,7 @@ export class PoetService {
         ),
       ]);
       if (!details) return false;
-      poet = {details, authoredPoems, authoredProses, authoredChosenVerses};
+      poet = {details, poems, proses, chosenVerses};
       await redisClient.set(`poet:${id}`, JSON.stringify(poet),  { EX: 60*60 })
       .catch(err => logger.error(err))
     }

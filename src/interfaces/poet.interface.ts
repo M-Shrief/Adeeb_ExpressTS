@@ -10,9 +10,9 @@ export interface PoetType {
     bio: string;
     reviewed: boolean;
   };
-  authoredPoems: PoemType[];
-  authoredChosenVerses: ChosenVerseType[];
-  authoredProses: ProseType[];
+  poems: PoemType[];
+  chosenVerses: ChosenVerseType[];
+  proses: ProseType[];
 }
 
 
