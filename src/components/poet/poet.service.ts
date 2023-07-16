@@ -32,7 +32,7 @@ export class PoetService {
 
   public async getOneWithLiterature(id: string): Promise<{isCached: boolean, poet: PoetType} | false> {
     let poet: PoetType, isCached = false;
-    const cacheResults = await redisClient.get(id);
+    const cacheResults = await redisClient.get(`poet:${id}`);
     if(cacheResults) {
       isCached = true;
       poet = JSON.parse(cacheResults);
@@ -49,7 +49,7 @@ export class PoetService {
       ]);
       if (!details) return false;
       poet = {details, authoredPoems, authoredProses, authoredChosenVerses};
-      await redisClient.set(id, JSON.stringify(poet),  { EX: 60*60 })
+      await redisClient.set(`poet:${id}`, JSON.stringify(poet),  { EX: 60*60 })
       .catch(err => logger.error(err))
     }
 
