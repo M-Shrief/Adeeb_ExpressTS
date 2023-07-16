@@ -1,3 +1,5 @@
+// Redis
+import redisClient  from '../../redis';
 // Models
 import { Poem } from './poem.model';
 // Types
@@ -6,6 +8,7 @@ import { PoemType } from '../../interfaces/poem.interface';
 import { createSchema, updateSchema } from './poem.schema';
 // Utils
 import { filterAsync } from '../../utils/asyncFilterAndMap';
+import { logger } from '../../utils/logger';
 export class PoemService {
   public async getAllWithPoetName(): Promise<PoemType[] | false> {
     const poems = await Poem.find(
@@ -27,12 +30,23 @@ export class PoemService {
   }
 
   public async getOneWithPoet(id: string): Promise<PoemType | false> {
-    const poem = await Poem.findById(id, {
-      intro: 1,
-      poet: 1,
-      verses: 1,
-      reviewed: 1,
-    }).populate('poet', ['name', 'bio', 'time_period']);
+    let poem: PoemType | null;
+
+    const cached = await redisClient.get(`poem:${id}`);
+    if(cached) {
+      poem = JSON.parse(cached);
+    }
+    else {
+      poem = await Poem.findById(id, {
+        intro: 1,
+        poet: 1,
+        verses: 1,
+        reviewed: 1,
+      }).populate('poet', ['name', 'bio', 'time_period']);
+      
+      await redisClient.set(`poem:${id}`, JSON.stringify(poem))
+      .catch(err => logger.error(err))
+    }
 
     if (!poem) return false;
     return poem;

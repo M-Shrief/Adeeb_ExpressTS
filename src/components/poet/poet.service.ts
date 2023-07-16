@@ -1,5 +1,5 @@
 // Redis
-import redisClient  from '../../redis'
+import redisClient  from '../../redis';
 // Models
 import { Poet } from './poet.model';
 import { Poem } from '../poem/poem.model';
