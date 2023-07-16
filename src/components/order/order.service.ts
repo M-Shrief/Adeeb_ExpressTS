@@ -36,7 +36,7 @@ export class OrderService {
         }
       );
       
-      await redisClient.set(`order:${name}:${phone}`, JSON.stringify(orders))
+      await redisClient.set(`order:${name}:${phone}`, JSON.stringify(orders), { EX: 60*15 })
       .catch(err => logger.error(err));
     }
 
@@ -70,7 +70,7 @@ export class OrderService {
         }
       );
       
-      await redisClient.set(`orders:partner:${partner}`, JSON.stringify(orders))
+      await redisClient.set(`orders:partner:${partner}`, JSON.stringify(orders), { EX: 60*15 })
       .catch(err => logger.error(err));
     }
     if (orders.length === 0) return false;

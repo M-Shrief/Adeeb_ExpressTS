@@ -44,7 +44,7 @@ export class PoemService {
         reviewed: 1,
       }).populate('poet', ['name', 'bio', 'time_period']);
       
-      await redisClient.set(`poem:${id}`, JSON.stringify(poem))
+      await redisClient.set(`poem:${id}`, JSON.stringify(poem), { EX: 60*15 })
       .catch(err => logger.error(err))
     }
 
