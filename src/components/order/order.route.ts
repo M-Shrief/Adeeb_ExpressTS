@@ -58,7 +58,7 @@ export class OrderRoute implements IRoute {
 
         body('address')
           .isLength({ min: 4, max: 100 })
-          .withMessage(ERROR_MSG.ADDRESS), // should have more
+          .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
 
         body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
 
@@ -116,7 +116,7 @@ export class OrderRoute implements IRoute {
         body('address')
           .optional()
           .isLength({ min: 4, max: 100 })
-          .withMessage(ERROR_MSG.ADDRESS), // should have more
+          .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
 
         body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
 
