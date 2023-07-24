@@ -6,6 +6,11 @@ import { OrderController } from './order.controller';
 import { IRoute } from '../../interfaces/route.interface';
 import { ERROR_MSG } from '../../interfaces/order.interface';
 // middlewares
+import {
+  guard,
+  jwtToken,
+  authErrorHandler,
+} from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validate.middleware';
 import { setCache } from '../../middlewares/cache.middleware';
 export class OrderRoute implements IRoute {
@@ -37,12 +42,20 @@ export class OrderRoute implements IRoute {
     );
     this.router.get(
       '/orders/:partner',
-      validate([param('partner').isMongoId().withMessage(ERROR_MSG.PARTNER)]),
+      [
+        jwtToken(true),
+        guard.check(['partner:read', 'partner:write']),
+        authErrorHandler,        
+        validate([param('partner').isMongoId().withMessage(ERROR_MSG.PARTNER)])
+      ],
       this.controller.indexPartnerOrders,
     );
     this.router.post(
       '/order',
-      validate([
+      [
+        jwtToken(false),
+        authErrorHandler,       
+        validate([
         body('partner').optional().isMongoId().withMessage(ERROR_MSG.PARTNER),
 
         body('name')
@@ -57,8 +70,8 @@ export class OrderRoute implements IRoute {
           .withMessage(ERROR_MSG.PHONE),
 
         body('address')
-          .isLength({ min: 4, max: 100 })
-          .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
+        .isLength({ min: 4, max: 100 })
+        .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
 
         body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
 
@@ -90,7 +103,7 @@ export class OrderRoute implements IRoute {
           .optional()
           .isArray()
           .withMessage(ERROR_MSG.PRODUCTS),
-      ]),
+      ]),],
       this.controller.post,
     );
     this.router.put(
@@ -114,9 +127,10 @@ export class OrderRoute implements IRoute {
           .withMessage(ERROR_MSG.PHONE),
 
         body('address')
-          .optional()
-          .isLength({ min: 4, max: 100 })
-          .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
+        .isLength({ min: 4, max: 50 })
+        .isString()
+        .escape()
+        .withMessage(ERROR_MSG.ADDRESS),
 
         body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
 
