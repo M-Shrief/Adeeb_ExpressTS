@@ -2,7 +2,6 @@ export interface PartnerType {
   _id: string;
   name: string;
   phone: string;
-  address: string | string[];
   password: string;
 }
 
@@ -12,6 +11,5 @@ export enum ERROR_MSG {
   // Inner properties
   NAME = 'name should be contain letters, and less than 50 in length',
   PHONE = 'phone not right or not supported',
-  ADDRESS = 'address can not be empty',
   PASSWORD = 'Password should contain: lowercase and uppercase letters, numbers, and symbols(*&^%%$#!@)',
 }

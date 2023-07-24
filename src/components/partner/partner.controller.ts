@@ -64,7 +64,6 @@ export class PartnerController {
           _id: partner._id,
           name: partner.name,
           phone: partner.phone,
-          address: partner.address,
         },
         accessToken,
       });
@@ -94,7 +93,6 @@ export class PartnerController {
           _id: partner._id,
           name: partner.name,
           phone: partner.phone,
-          address: partner.address,
         },
         accessToken,
       });

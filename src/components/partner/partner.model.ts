@@ -15,10 +15,6 @@ const partnerSchema = new Schema(
       required: true,
       unique: true,
     },
-    address: {
-      type: String || Array<string>,
-      required: true,
-    },
     password: {
       type: String,
       required: true,

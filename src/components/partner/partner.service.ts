@@ -26,7 +26,6 @@ export class PartnerService {
     const partner = new Partner({
       name: partnerData.name,
       phone: partnerData.phone,
-      address: partnerData.address,
       password,
     });
 
@@ -41,7 +40,7 @@ export class PartnerService {
   ): Promise<PartnerType | false> {
     const existingPartner = await Partner.findOne(
       { phone },
-      { name: 1, phone: 1, address: 1, password: 1 },
+      { name: 1, phone: 1,  password: 1 },
     );
     if (!existingPartner) return false;
 
