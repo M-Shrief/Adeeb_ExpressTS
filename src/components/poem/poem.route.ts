@@ -33,6 +33,10 @@ export class PoemRoute implements IRoute {
       this.controller.indexOneWithPoet,
     );
     this.router.post(
+      '/poems',
+      this.controller.postMany,
+    );
+    this.router.post(
       '/poem',
       validate([
         body('intro')

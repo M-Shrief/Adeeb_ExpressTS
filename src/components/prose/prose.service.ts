@@ -4,9 +4,9 @@ import { Prose } from './prose.model';
 import { ProseType } from '../../interfaces/prose.interface';
 // Utils
 import { shuffle } from '../../utils/shuffle';
-import { createSchema, updateSchema } from './prose.schema';
-// Schema
 import { filterAsync } from '../../utils/asyncFilterAndMap';
+// Schema
+import { createSchema, updateSchema } from './prose.schema';
 export class ProseService {
   public async getAllWithPoetName(): Promise<ProseType[] | false> {
     const proses = await Prose.find(

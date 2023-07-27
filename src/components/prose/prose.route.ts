@@ -33,6 +33,10 @@ export class ProseRoute implements IRoute {
       this.controller.indexOneWithPoetName,
     );
     this.router.post(
+      '/proses',
+      this.controller.postMany,
+    );
+    this.router.post(
       '/prose',
       validate([
         body('poet').isMongoId().withMessage(ERROR_MSG.POET),

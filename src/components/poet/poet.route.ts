@@ -28,6 +28,10 @@ export class PoetRoute implements IRoute {
       this.controller.indexOneWithLiterature,
     );
     this.router.post(
+      '/poets',
+      this.controller.postMany,
+    );
+    this.router.post(
       '/poet',
       // removed isEmpty(), to responds with the right message
       validate([

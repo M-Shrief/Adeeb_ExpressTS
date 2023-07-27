@@ -34,6 +34,10 @@ export class ChosenVerseRoute implements IRoute {
       this.controller.indexOneWithPoetName,
     );
     this.router.post(
+      '/chosenverses',
+      this.controller.postMany,
+    );
+    this.router.post(
       '/chosenverse',
       validate([
         body('poet').isMongoId().withMessage(ERROR_MSG.POET),
