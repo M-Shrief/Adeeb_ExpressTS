@@ -3,10 +3,10 @@ import {describe, it} from 'mocha'
 import {baseHttp} from '../../utils/axios';
 import { PoetType } from '../../interfaces/poet.interface';
 
+let poetId: string;
 
-describe('Responds with the right JSON body', async () => {
-    let poetId: string;
-    it('GET /poets', async () => {
+describe('GET /poets', async () => {
+    it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get('poets');
         
         assert.strictEqual(req.status, 200);
@@ -20,8 +20,10 @@ describe('Responds with the right JSON body', async () => {
 
         poetId = poets[0]._id;
     })
+})
 
-    it('GET /poet/:id', async () => {
+describe('GET /poets', async () => {
+    it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get(`poet/${poetId}`);
         
         assert.strictEqual(req.status, 200);

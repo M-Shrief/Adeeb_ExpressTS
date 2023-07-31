@@ -3,10 +3,9 @@ import {describe, it} from 'mocha'
 import {baseHttp} from '../../utils/axios';
 import { PoemType } from '../../interfaces/poem.interface';
 
-
-describe('Responds with the right JSON body', async () => {
-    let poemId: string;
-    it('GET /poems', async () => {
+let poemId: string;
+describe('GET /poems', async () => {
+    it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get('poems');
         
         assert.strictEqual(req.status, 200);
@@ -21,18 +20,19 @@ describe('Responds with the right JSON body', async () => {
 
         poemId = poems[0]._id;
     })
+})
 
-    it('GET /poem/:id', async () => {
+describe('GET /poem/:id', async () => {
+    it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get(`poem/${poemId}`);
-        
+    
         assert.strictEqual(req.status, 200);
         const poem: PoemType = req.data;
-
+    
         assert.isDefined(poem._id)
         assert.isDefined(poem.intro)
         assert.isDefined(poem.poet)
         assert.isDefined(poem.reviewed)
-        assert.isArray(poem.verses);
-
+        assert.isArray(poem.verses);    
     })
 })
