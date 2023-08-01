@@ -699,3 +699,43 @@ describe('PUT /order/:id', () => {
 
     after(() => baseHttp.delete(`order/${orderId}`));
 })
+
+describe('DELETE /order/:id', () => {
+    let orderId: string;
+    before(async () => {
+        const req = await baseHttp.post('order', guestOrder);
+        orderId = req.data._id
+    })
+
+    it('Delete order/:id successfully', async () => {
+        const req = await baseHttp.delete(`/order/${orderId}`);
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = orderId.replace(orderId[5], 'a');
+            await baseHttp.delete(`order/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await baseHttp.delete(`order/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+    })
+})
