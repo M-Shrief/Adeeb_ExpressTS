@@ -74,6 +74,9 @@ export class PartnerRoute implements IRoute {
     this.router.put(
       '/partner/:id',
       [
+        jwtToken(true),
+        guard.check(['partner:read', 'partner:write']),
+        authErrorHandler,
         validate([
           param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
 
@@ -97,19 +100,16 @@ export class PartnerRoute implements IRoute {
             .escape()
             .withMessage(ERROR_MSG.PASSWORD),
         ]),
-        jwtToken(true),
-        guard.check(['partner:read', 'partner:write']),
-        authErrorHandler,
       ],
       this.controller.update,
     );
     this.router.delete(
       '/partner/:id',
       [
-        validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
         jwtToken(true),
         guard.check(['partner:read', 'partner:write']),
         authErrorHandler,
+        validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
       ],
       this.controller.remove,
     );

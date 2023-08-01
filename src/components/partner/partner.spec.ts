@@ -30,7 +30,7 @@ describe('GET /partner/:id', () => {
     it('get Partner info when authorized', async () => {
         const req = await withAuthHttp(token).get(`partner/${partnerId}`)
 
-        assert.equal(req.status, 200);
+        assert.equal(req.status, HttpStatusCode.OK);
 
         assert.isString(req.data._id);
         assert.isString(req.data.name);
@@ -197,5 +197,82 @@ describe('POST /partner/signup', () => {
             }
             throw error;
         })
+    })
+})
+
+describe('PUT /partner/:id', () => {
+    let partnerId: string;
+    let token: string;
+    before(async () => {
+        const req = await baseHttp.post('partner/signup', signupData);
+        partnerId = req.data.partner._id
+        token = req.data.accessToken;
+    })
+
+    after(() => withAuthHttp(token).delete(`partner/${partnerId}`));
+
+    it('It updates partner data successfully with valid data', async () => {
+        const req = await withAuthHttp(token).put(`partner/${partnerId}`, {name: 'E2E Put Test'})
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })  
+
+    it('returns the correct error message with invalid data', async () => {
+        await withAuthHttp(token).put(`partner/${partnerId}`, {name: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NAME);
+                return;
+            }
+            throw error;
+        })
+
+        await withAuthHttp(token).put(`partner/${partnerId}`, {phone: 12412})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PHONE);
+                return;
+            }
+            throw error;
+        })
+
+        await withAuthHttp(token).put(`partner/${partnerId}`, {password: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PASSWORD);
+                return;
+            }
+            throw error;
+        })
+    })
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = partnerId.replace(partnerId[5], 'a');
+            await withAuthHttp(token).put(`partner/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await withAuthHttp(token).put(`partner/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
     })
 })

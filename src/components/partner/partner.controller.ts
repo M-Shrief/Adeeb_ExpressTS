@@ -104,7 +104,7 @@ export class PartnerController {
           ERROR_MSG.NOT_VALID,
           true,
         );
-      res.status(201).send(partner);
+      res.status(HttpStatusCode.ACCEPTED).send(partner);
     } catch (error) {
       next(error);
     }
