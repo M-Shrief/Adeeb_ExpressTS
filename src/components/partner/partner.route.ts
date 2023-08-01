@@ -43,11 +43,13 @@ export class PartnerRoute implements IRoute {
 
         body('phone')
           .isString()
+          // .isMobilePhone('any')
           .escape()
           .withMessage(ERROR_MSG.PHONE),
 
         body('password')
           .isString()
+          // .isStrongPassword()
           .escape()
           .withMessage(ERROR_MSG.PASSWORD),
       ]),
@@ -83,13 +85,15 @@ export class PartnerRoute implements IRoute {
 
           body('phone')
             .optional()
+            .isString()
+            // .isMobilePhone('any')
             .escape()
-            .isMobilePhone('any')
             .withMessage(ERROR_MSG.PHONE),
 
           body('password')
             .optional()
             .isString()
+          // .isStrongPassword()
             .escape()
             .withMessage(ERROR_MSG.PASSWORD),
         ]),

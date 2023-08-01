@@ -19,6 +19,75 @@ const loginData = {
     "password": "P@ssword1"
 };
 
+describe('GET /partner/:id', () => {
+    let partnerId: string;
+    let token: string;
+    before(async () => {
+        const req = await baseHttp.post('partner/login', loginData);
+        partnerId = req.data.partner._id
+        token = req.data.accessToken;
+    })
+    it('get Partner info when authorized', async () => {
+        const req = await withAuthHttp(token).get(`partner/${partnerId}`)
+
+        assert.equal(req.status, 200);
+
+        assert.isString(req.data._id);
+        assert.isString(req.data.name);
+        assert.isString(req.data.phone);
+    })
+    
+    it('responds with not authorized error when get Partner info with out authorization', async () => {
+            await baseHttp.get(`partner/${partnerId}`)
+            .catch(error => {
+                if(error instanceof AxiosError) {
+                    assert.equal(error.response!.status, HttpStatusCode.UNAUTHORIZED);
+                    assert.equal(error.response!.data.message, 'Unautorized for this request');
+                    return;
+                }   
+                throw error;
+            })
+
+            await withAuthHttp('tettt1').get(`partner/${partnerId}`)
+            .catch(error => {
+                if(error instanceof AxiosError) {
+                    assert.equal(error.response!.status, HttpStatusCode.UNAUTHORIZED);
+                    assert.equal(error.response!.data.message, 'Unautorized for this request');
+                    return;
+                }   
+                throw error;
+            })
+    })
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = partnerId.replace(partnerId[5], 'a');
+            await withAuthHttp(token).get(`partner/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await withAuthHttp(token).get(`partner/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
+    })
+})
+
 describe('POST /partner/login', () => {
     it('It login with correct data', async () => {
         const req = await baseHttp.post('/partner/login', loginData);
