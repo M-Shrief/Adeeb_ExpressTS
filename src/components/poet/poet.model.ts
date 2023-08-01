@@ -8,14 +8,17 @@ const poetSchema = new Schema(
     name: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 50},
     },
     time_period: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 50},
     },
     bio: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 500},
     },
     reviewed: {
       type: Boolean,
