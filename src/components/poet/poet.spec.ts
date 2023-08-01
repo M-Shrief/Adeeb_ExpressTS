@@ -119,3 +119,66 @@ describe('POST /poets', () => {
         assert.containsAllKeys(req.data.nonValidPoets[0], data[2]);
     })
 })
+
+describe('POST /poet', () => {
+    const data =  {
+        "name": "التهامي",
+        "time_period": "عباسي",
+        "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+        "reviewed": true,
+    } as PoetType['details'];
+
+    it('it post valid data correctly', async () => {
+        const req = await baseHttp.post('/poet', data);
+
+        assert.containsAllKeys(req.data, data);
+        
+        after(() => { baseHttp.delete(`poet/${poetId}`)})
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+            
+        await baseHttp.post('/poet', {
+            // "name": 'التهامي',
+            "time_period": "عباسي",
+            "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "reviewed": true,
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NAME);
+                return;
+            }
+            throw error;
+        })
+
+      await baseHttp.post('/poet', {
+            "name": 'التهامي',
+            // "time_period": "عباسي",
+            "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "reviewed": true,
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.TIME_PERIOD);
+                return;
+            }
+            throw error;
+        })
+  
+
+        await baseHttp.post('/poet', {
+            "name": 'التهامي',
+            "time_period": "عباسي",
+            // "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "reviewed": true,
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.BIO);
+                return;
+            }
+            throw error;
+        })
+    })
+})
