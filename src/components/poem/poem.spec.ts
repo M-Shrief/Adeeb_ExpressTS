@@ -248,7 +248,7 @@ describe('PUT /poem/:id', () => {
         poemId = req.data._id;
     })
 
-    it('updates poet data successfuly with valid data', async() => {
+    it('updates poem data successfuly with valid data', async() => {
         const req = await baseHttp.put(`poem/${poemId}`, {intro: "testing"})
         assert.equal(req.status, HttpStatusCode.ACCEPTED);
     })

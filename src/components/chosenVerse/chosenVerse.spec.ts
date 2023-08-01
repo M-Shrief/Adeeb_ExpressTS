@@ -285,7 +285,7 @@ describe('PUT /chosenverse/:id', () => {
         chosenVerseId = req.data._id;
     })
 
-    it('updates poet data successfuly with valid data', async() => {
+    it('updates chosenVerse data successfuly with valid data', async() => {
         const req = await baseHttp.put(`/chosenverse/${chosenVerseId}`, {tags: 'الحكمة,الفخر,الشجاعة'});
         assert.equal(req.status, HttpStatusCode.ACCEPTED);
     })
