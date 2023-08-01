@@ -1,6 +1,7 @@
 import { PoetType } from './poet.interface';
 
 export interface ProseType {
+  _id: string;
   poet: string | PoetType['details'];
   tags: string;
   qoute: string;

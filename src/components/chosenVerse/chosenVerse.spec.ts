@@ -53,7 +53,7 @@ describe('GET /chosenverses/random', async () => {
     })
 })
 
-describe('GET /chosenverses/:id', () => {
+describe('GET /chosenverse/:id', () => {
     let chosenVerseId: string;
     before(async () => {
         const req = await baseHttp.get('chosenverses');
