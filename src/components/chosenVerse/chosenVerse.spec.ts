@@ -264,3 +264,154 @@ describe('POST /chosenverse', () => {
         })        
     })
 })
+
+describe('PUT /chosenverse/:id', () => {
+    let chosenVerseId: string;
+    before(async () => {
+        const data = {
+            "poet": "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        };
+        const req = await baseHttp.post('chosenverse', data)
+        
+        chosenVerseId = req.data._id;
+    })
+
+    it('updates poet data successfuly with valid data', async() => {
+        const req = await baseHttp.put(`/chosenverse/${chosenVerseId}`, {tags: 'الحكمة,الفخر,الشجاعة'});
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.put(`chosenverse/${chosenVerseId}`, {poet: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POET);
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.put(`chosenverse/${chosenVerseId}`, {poem: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POEM);
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.put(`chosenverse/${chosenVerseId}`, {tags: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.TAGS);
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.put(`chosenverse/${chosenVerseId}`, {verses: {first: 'asassa', sec: 'asfsf'}})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.VERSES);
+                return;
+            }
+            throw error;
+        })
+    })
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = chosenVerseId.replace(chosenVerseId[5], 'a');
+            await baseHttp.put(`chosenverse/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await baseHttp.put(`chosenverse/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
+    })
+
+    after(() => { baseHttp.delete(`chosenverse/${chosenVerseId}`)})
+})
+
+describe('DELETE /chosenverse/:id', () => {
+    let chosenVerseId: string;
+    before(async () => {
+        const data = {
+            "poet": "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        };
+        const req = await baseHttp.post('chosenverse', data)
+        
+        chosenVerseId = req.data._id;
+    })
+
+    it('Delete poem/:id successfully', async () => {
+        const req = await baseHttp.delete(`/chosenverse/${chosenVerseId}`);
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = chosenVerseId.replace(chosenVerseId[5], 'a');
+            await baseHttp.delete(`chosenverse/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_AVAILABLE)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await baseHttp.delete(`chosenverse/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
+    })
+})
