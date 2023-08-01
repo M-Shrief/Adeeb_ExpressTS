@@ -50,7 +50,7 @@ export class OrderRoute implements IRoute {
       ],
       this.controller.indexPartnerOrders,
     );
-    
+
     this.router.post(
       '/order',
       [
@@ -128,6 +128,7 @@ export class OrderRoute implements IRoute {
           .withMessage(ERROR_MSG.PHONE),
 
         body('address')
+        .optional()
         .isString()
         .escape()
         .withMessage(ERROR_MSG.ADDRESS),
@@ -139,7 +140,10 @@ export class OrderRoute implements IRoute {
           .isBoolean()
           .withMessage(ERROR_MSG.COMPLETED),
 
-        body('products').isArray({min: 1}).withMessage(ERROR_MSG.PRODUCTS),
+        body('products')
+        .optional()
+        .isArray({min: 1})
+        .withMessage(ERROR_MSG.PRODUCTS),
 
         body('products.*.fontType')
           .optional()

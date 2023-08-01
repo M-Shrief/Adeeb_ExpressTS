@@ -610,3 +610,92 @@ describe('POST /order', () => {
         }) 
     })
 })
+
+describe('PUT /order/:id', () => {
+    let orderId: string;
+    before(async () => {
+        const req = await baseHttp.post('/order', guestOrder);
+        orderId = req.data._id;
+    })
+
+    it('updates order data successfully with valid data', async () => {
+        const req = await baseHttp.put(`order/${orderId}`, {...partnerOrder});
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.put(`order/${orderId}`, {
+            "name":124
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NAME);
+                return;
+            }   
+            throw error;
+        })
+        
+        await baseHttp.put(`order/${orderId}`, {
+            "phone": true
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PHONE);
+                return;
+            }   
+            throw error;
+        })   
+
+        await baseHttp.put(`order/${orderId}`, {
+            "address":true
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.ADDRESS);
+                return;
+            }   
+            throw error;
+        })   
+
+        await baseHttp.put(`order/${orderId}`, {
+            "products":[] 
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PRODUCTS);
+                return;
+            }   
+            throw error;
+        })
+        
+        await baseHttp.put(`order/64c94dc632295fae1b7fb200`, {
+            "name": 'fasfaffsaasf', // testing here
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID);
+                return;
+            }   
+            throw error;
+        }) 
+
+        await baseHttp.put(`order/1244`, {
+            "name": 'fasfaffsaasf', // testing here
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND);
+                return;
+            }   
+            throw error;
+        }) 
+    })
+
+    after(() => baseHttp.delete(`order/${orderId}`));
+})
