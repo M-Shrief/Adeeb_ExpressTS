@@ -316,3 +316,56 @@ describe('PUT /poem/:id', () => {
     
     after(() => {baseHttp.delete(`/poem/${poemId}`)})
 })
+
+describe('DELETE /poet/:id', () => {
+    let poemId: string;
+    before(async () => {
+        const data = {
+            "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        };
+        const req = await baseHttp.post('poem', data)
+        poemId = req.data._id;
+    })
+
+    it('Delete poem/:id successfully', async () => {
+        const req = await baseHttp.delete(`/poem/${poemId}`);
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('returns 406 with nonExisting id', async () => {
+        const corruptedId = poemId.replace(poemId[5], 'a');
+        await baseHttp.delete(`poem/${corruptedId}`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND);
+                return;
+            }
+            throw error;
+        })
+    })
+
+    it('returns 404 with nonExisting id', async () => {
+        await baseHttp.delete(`poem/22`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND);
+                return;
+            }
+            throw error;
+        })
+    })
+})
