@@ -1,4 +1,4 @@
-import {assert} from 'chai';
+import {assert, util} from 'chai';
 import {describe, it} from 'mocha'
 // Utils
 import {baseHttp} from '../../utils/axios';
@@ -98,5 +98,169 @@ describe('GET /chosenverses/:id', () => {
             throw error;
         }
 
+    })
+})
+
+describe('POST /chosenverses', () => {
+    const data = [
+        {
+            "poet": "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        },
+
+        {
+            "poet":  "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        },
+
+        {
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        },
+    ]
+    const testChosenVersesIds: string[] = [];
+    afterEach(() => {
+        testChosenVersesIds.forEach(async (id) => {
+            await baseHttp.delete(`poem/${id}`);
+        })
+    })
+    it('it saves valid entries correctly, and returns valid & non-valid entries', async () => {
+        const req = await baseHttp.post('/chosenverses', data);
+
+        const chosenVersesIds = req.data.newChosenVerses.map((chosenVerse: ChosenVerseType) => chosenVerse._id)
+        testChosenVersesIds.push(...chosenVersesIds);
+
+        assert.strictEqual(req.status, HttpStatusCode.CREATED)
+
+        assert.isNotEmpty(req.data.newChosenVerses);
+        assert.containsAllKeys(req.data.newChosenVerses[0], data[0]);
+
+        assert.isNotEmpty(req.data.nonValidChosenVerses);
+        assert.containsAllKeys(req.data.nonValidChosenVerses[0], data[2]);
+    })
+})
+
+describe('POST /chosenverse', () => {
+    it('it post valid data correctly', async() => {
+        const data = {
+            "poet": "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        };
+        const req = await baseHttp.post('chosenverse', data)
+
+        assert.equal(req.status, HttpStatusCode.CREATED)
+        assert.containsAllKeys(req.data, data);
+
+        after(() => { baseHttp.delete(`chosenverse/${req.data._id}`)})
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.post('/chosenverse', {
+            // "poet": "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POET);
+                return;
+            }
+            throw error;
+        })        
+
+        await baseHttp.post('/chosenverse', {
+            "poet": "6371ea89885e286801faccaa",
+            // "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POEM);
+                return;
+            }
+            throw error;
+        })        
+        await baseHttp.post('/chosenverse', {
+            "poet": "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            // "tags": "الفخر",
+            "verses": [
+            {
+                "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+                "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            }
+            ]
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.TAGS);
+                return;
+            }
+            throw error;
+        })        
+        await baseHttp.post('/chosenverse', {
+            "poet": "6371ea89885e286801faccaa",
+            "poem": "6371eb6690c2ad965846c221",
+            "reviewed": true,
+            "tags": "الفخر",
+            // "verses": [
+            // {
+            //     "first": "لا ذَنبَ لي كَم رمت كتم فَضائِلي",
+            //     "sec": "فَكَأَنَّما برقعت وَجه نَهاري"
+            // }
+            // ]
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.VERSES);
+                return;
+            }
+            throw error;
+        })        
     })
 })
