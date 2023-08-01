@@ -9,6 +9,7 @@ export interface OrderType {
   address: string;
   reviewed: boolean;
   completed: boolean;
+  createdAt?: string;
 }
 
 export enum ERROR_MSG {

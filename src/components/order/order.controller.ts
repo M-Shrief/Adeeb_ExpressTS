@@ -23,7 +23,7 @@ export class OrderController {
       if (!orders)
         throw new AppError(
           HttpStatusCode.NOT_FOUND,
-          ERROR_MSG.NOT_AVAILABLE,
+          ERROR_MSG.NOT_FOUND,
           true,
         );
       res.status(HttpStatusCode.OK).send(orders);

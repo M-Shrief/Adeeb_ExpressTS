@@ -27,13 +27,13 @@ export class OrderRoute implements IRoute {
       [
         validate([
           body('name')
-            .isLength({ min: 4, max: 50 })
             .isString()
             .escape()
             .withMessage(ERROR_MSG.NAME),
           body('phone')
+            .isString()
             .escape()
-            .isMobilePhone('any')
+            // .isMobilePhone('any')
             .withMessage(ERROR_MSG.PHONE),
         ]),
         setCache,

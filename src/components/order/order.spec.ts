@@ -133,10 +133,75 @@ const partnerOrder = {
     "completed": false
 }
 
-// describe('get guestOrders POST /orders/guest', () => {
-    
+describe('get guestOrders POST /orders/guest', () => {
+    let orderId: string;
+    before(async () => { 
+        const req = await baseHttp.post('/order', guestOrder)
+        orderId = req.data._id;
+    })
 
-// })
+    it("gets guests' orders successfully with valid data", async () => {
+        const req = await baseHttp.post('/orders/guest', {
+            "name":"Guest Order",
+            "phone":"01235554580"
+        })
+
+        assert.equal(req.status, HttpStatusCode.OK);
+        const orders: OrderType[] = req.data;
+        assert.isArray(orders);
+
+        assert.isString(orders[0]._id);
+        assert.isString(orders[0].name);
+        assert.isString(orders[0].phone);
+        assert.isString(orders[0].address);
+        assert.isBoolean(orders[0].completed);
+        assert.isBoolean(orders[0].reviewed);
+        assert.isString(orders[0].createdAt);
+
+        assert.isArray(orders[0].products);
+        assert.containsAllKeys(orders[0].products[0], guestOrder.products[0]);
+    })    
+
+    it("gets guests' orders successfully with valid data", async () => {
+        await baseHttp.post('/orders/guest', {
+            "name":"Not found Order",
+            "phone":"01235522580"
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND);
+                return;
+            }   
+            throw error;
+        })
+    }) 
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.post('/orders/guest', {
+            "phone":"01235522580"
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NAME);
+                return;
+            }   
+            throw error;
+        })
+
+        await baseHttp.post('/orders/guest', {
+            "name":"Not found Order",
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PHONE);
+                return;
+            }   
+            throw error;
+        })
+    })
+
+    after(() => {baseHttp.delete(`order/${orderId}`)})
+})
 
 describe('POST /order', () => {
 
