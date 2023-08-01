@@ -1,6 +1,9 @@
 import {assert} from 'chai';
 import {describe, it} from 'mocha'
+// Utils
 import {baseHttp} from '../../utils/axios';
+import HttpStatusCode from '../../utils/httpStatusCode';
+// Types
 import { PoemType } from '../../interfaces/poem.interface';
 
 let poemId: string;
@@ -8,7 +11,7 @@ describe('GET /poems', async () => {
     it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get('poems');
         
-        assert.strictEqual(req.status, 200);
+        assert.strictEqual(req.status, HttpStatusCode.OK);
         const poems: PoemType[] = req.data;
 
         assert.isArray(poems);
@@ -26,7 +29,7 @@ describe('GET /poem/:id', async () => {
     it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get(`poem/${poemId}`);
     
-        assert.strictEqual(req.status, 200);
+        assert.strictEqual(req.status, HttpStatusCode.OK);
         const poem: PoemType = req.data;
     
         assert.isDefined(poem._id)
