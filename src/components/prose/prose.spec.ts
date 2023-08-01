@@ -292,7 +292,7 @@ describe('DELETE /prose/:id', () => {
         proseId = req.data._id;
     })
 
-    it('Delete poem/:id successfully', async () => {
+    it('Delete prose/:id successfully', async () => {
         const req = await baseHttp.delete(`/prose/${proseId}`);
         assert.equal(req.status, HttpStatusCode.ACCEPTED);
     })

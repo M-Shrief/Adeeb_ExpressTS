@@ -276,3 +276,47 @@ describe('PUT /partner/:id', () => {
 
     })
 })
+
+describe('DELETE /partner/:id', () => {
+    let partnerId: string;
+    let token: string;
+    before(async () => {
+        const req = await baseHttp.post('partner/signup', signupData);
+        partnerId = req.data.partner._id
+        token = req.data.accessToken;
+    })
+
+
+    it('Delete partner/:id successfully', async () => {
+        const req = await withAuthHttp(token).delete(`/partner/${partnerId}`);
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = partnerId.replace(partnerId[5], 'a');
+            await withAuthHttp(token).delete(`partner/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await withAuthHttp(token).delete(`partner/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
+    })
+})
