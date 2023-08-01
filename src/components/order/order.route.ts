@@ -59,18 +59,19 @@ export class OrderRoute implements IRoute {
         body('partner').optional().isMongoId().withMessage(ERROR_MSG.PARTNER),
 
         body('name')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.NAME),
 
         body('phone')
-          .escape()
-          .isMobilePhone('any')
+        .isString()
+        .escape()
+          // .isMobilePhone('any')
           .withMessage(ERROR_MSG.PHONE),
 
         body('address')
-        .isLength({ min: 4, max: 100 })
+        .isString()
+        .escape()
         .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
 
         body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
@@ -80,19 +81,18 @@ export class OrderRoute implements IRoute {
           .isBoolean()
           .withMessage(ERROR_MSG.COMPLETED),
 
+        body('products').notEmpty().isArray().withMessage(ERROR_MSG.PRODUCTS),
+
         body('products.*.fontType')
           .optional()
-          .isLength({ max: 10 })
           .isString()
           .withMessage(ERROR_MSG.PRODUCTS),
         body('products.*.fontColor')
           .optional()
-          .isLength({ max: 8 })
           .isString()
           .withMessage(ERROR_MSG.PRODUCTS),
         body('products.*.backgroundColor')
           .optional()
-          .isLength({ max: 8 })
           .isString()
           .withMessage(ERROR_MSG.PRODUCTS),
         body('products.*.print')
@@ -115,7 +115,6 @@ export class OrderRoute implements IRoute {
 
         body('name')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.NAME),
@@ -123,11 +122,11 @@ export class OrderRoute implements IRoute {
         body('phone')
           .optional()
           .escape()
-          .isMobilePhone('any')
+          .isString()
+          // .isMobilePhone('any')
           .withMessage(ERROR_MSG.PHONE),
 
         body('address')
-        .isLength({ min: 4, max: 50 })
         .isString()
         .escape()
         .withMessage(ERROR_MSG.ADDRESS),
@@ -139,19 +138,18 @@ export class OrderRoute implements IRoute {
           .isBoolean()
           .withMessage(ERROR_MSG.COMPLETED),
 
+        body('products').isArray({min: 1}).withMessage(ERROR_MSG.PRODUCTS),
+
         body('products.*.fontType')
           .optional()
-          .isLength({ max: 10 })
           .isString()
           .withMessage(ERROR_MSG.PRODUCTS),
         body('products.*.fontColor')
           .optional()
-          .isLength({ max: 8 })
           .isString()
           .withMessage(ERROR_MSG.PRODUCTS),
         body('products.*.backgroundColor')
           .optional()
-          .isLength({ max: 8 })
           .isString()
           .withMessage(ERROR_MSG.PRODUCTS),
         body('products.*.print.*')
