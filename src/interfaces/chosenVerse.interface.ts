@@ -3,6 +3,7 @@ import { PoetType } from './poet.interface';
 import { PoemType } from './poem.interface';
 
 export interface ChosenVerseType {
+  _id: string;
   poet: string | PoetType['details'];
   poem: string | PoemType;
   tags: string;
