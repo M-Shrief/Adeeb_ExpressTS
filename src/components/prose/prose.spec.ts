@@ -97,3 +97,102 @@ describe('GET /prose/:id', () => {
 
     })
 })
+
+describe('POST /proses', () => {
+    const data = [
+        {
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "tags": "حكمة, حب, العلم",
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+            "reviewed": true
+        },
+        {
+            "poet": "639b5cf712eec0bb274cecd4",
+            "tags": "حكمة, حب, العلم",
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+            "reviewed": true
+        },
+        {
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+            "reviewed": true
+        }
+    ]
+    const testProsesIds: string[] = [];
+    afterEach(() => {
+        testProsesIds.forEach(async (id) => {
+            await baseHttp.delete(`prose/${id}`);
+        })
+    })
+    it('it saves valid entries correctly, and returns valid & non-valid entries', async () => {
+        const req = await baseHttp.post('/proses', data);
+
+        const prosesIds = req.data.newProses.map((prose: ProseType) => prose._id)
+        testProsesIds.push(...prosesIds);
+
+        assert.strictEqual(req.status, HttpStatusCode.CREATED)
+
+        assert.isNotEmpty(req.data.newProses);
+        assert.containsAllKeys(req.data.newProses[0], data[0]);
+
+        assert.isNotEmpty(req.data.nonValidProses);
+        assert.containsAllKeys(req.data.nonValidProses[0], data[2]);
+    })
+})
+
+describe('POST /prose', () => {
+    it('it post valid data correctly', async() => {
+        const data = {
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "tags": "حكمة, حب, العلم",
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+            "reviewed": true
+        };
+        const req = await baseHttp.post('prose', data)
+
+        assert.equal(req.status, HttpStatusCode.CREATED)
+        assert.containsAllKeys(req.data, data);
+
+        after(() => { baseHttp.delete(`prose/${req.data._id}`)})
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.post('/prose', {
+            // "poet":  "639b5cf712eec0bb274cecd4",
+            "tags": "حكمة, حب, العلم",
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POET);
+                return;
+            }
+            throw error;
+        })        
+
+        await baseHttp.post('/prose', {
+            "poet":  "639b5cf712eec0bb274cecd4",
+            // "tags": "حكمة, حب, العلم",
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.TAGS);
+                return;
+            }
+            throw error;
+        })        
+
+        await baseHttp.post('/prose', {
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "tags": "حكمة, حب, العلم",
+            // "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.QOUTE);
+                return;
+            }
+            throw error;
+        })        
+    })
+})
