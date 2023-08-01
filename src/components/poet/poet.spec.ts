@@ -200,20 +200,17 @@ describe('PUT /poet/:id', () => {
 
     it('updates poet data successfuly with valid data', async ( ) => {
 
-        const req = await baseHttp.put(`poet/${poetId}`);
+        const req = await baseHttp.put(`poet/${poetId}`, {name: 'testing'});
         assert.equal(req.status, HttpStatusCode.ACCEPTED);
     })
 
     it('returns the correct error message with invalid data', async () => {
             
         await baseHttp.put(`poet/${poetId}`, {
-            // "name": 'Testing',
-            "time_period": "عباسي",
-            "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
-            "reviewed": true,
+            "name": 124,
         }).catch(error => {
             if(error instanceof AxiosError) {
-                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
                 assert.equal(error.response!.data.message, ERROR_MSG.NAME);
                 return;
             }
@@ -221,13 +218,10 @@ describe('PUT /poet/:id', () => {
         })
 
       await baseHttp.put(`poet/${poetId}`, {
-            "name": 'Testing',
-            // "time_period": "عباسي",
-            "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
-            "reviewed": true,
+            "time_period": 21,
         }).catch(error => {
             if(error instanceof AxiosError) {
-                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
                 assert.equal(error.response!.data.message, ERROR_MSG.TIME_PERIOD);
                 return;
             }
@@ -236,13 +230,10 @@ describe('PUT /poet/:id', () => {
   
 
         await baseHttp.put(`poet/${poetId}`, {
-            "name": 'Testing',
-            "time_period": "عباسي",
-            // "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
-            "reviewed": true,
+            "bio": 122,
         }).catch(error => {
             if(error instanceof AxiosError) {
-                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
                 assert.equal(error.response!.data.message, ERROR_MSG.BIO);
                 return;
             }
