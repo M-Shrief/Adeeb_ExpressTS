@@ -45,17 +45,16 @@ export class ChosenVerseRoute implements IRoute {
         body('poem').isMongoId().withMessage(ERROR_MSG.POEM),
 
         body('tags')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.TAGS),
+
+        body('verses').isArray().withMessage(ERROR_MSG.VERSES),
         body('verses.*.first')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),
         body('verses.*.sec')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),
@@ -76,21 +75,20 @@ export class ChosenVerseRoute implements IRoute {
 
         body('tags')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.TAGS),
 
+        body('verses').optional().isArray().withMessage(ERROR_MSG.VERSES),
+
         body('verses.*.first')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),
 
         body('verses.*.sec')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),
