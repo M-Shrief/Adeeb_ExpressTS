@@ -46,6 +46,7 @@ export class PoemRoute implements IRoute {
 
         body('poet').isMongoId().withMessage(ERROR_MSG.POET),
 
+        body('verses').isArray().withMessage(ERROR_MSG.VERSES),
         body('verses.*.first')
           .isString()
           .escape()
@@ -67,23 +68,22 @@ export class PoemRoute implements IRoute {
 
         body('intro')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.INTRO),
 
-        body('poet').optional().isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
+        body('poet').optional().isMongoId().withMessage(ERROR_MSG.POET),
+
+        body('verses').optional().isArray().withMessage(ERROR_MSG.VERSES),
 
         body('verses.*.first')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),
 
         body('verses.*.sec')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),

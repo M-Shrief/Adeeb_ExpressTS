@@ -16,6 +16,6 @@ export enum ERROR_MSG {
   // for inner Properties
   INTRO = 'intro should be letters, and max 50 letters length',
   POET = "Poet's not found",
-  VERSES = "Verses must be strings, and can't be empty.",
+  VERSES = "Verses must be an Array of strings, and can't be empty.",
   REVIEWED = 'reviewed should be true or false',
 }

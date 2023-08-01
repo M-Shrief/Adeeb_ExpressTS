@@ -49,8 +49,6 @@ describe('GET /poem/:id', async () => {
         } catch(error) {
             if(error instanceof AxiosError) {
                 assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
-        
-                assert.isString(error.response!.data.message)
                 assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
                 return;
             }
@@ -65,8 +63,6 @@ describe('GET /poem/:id', async () => {
         } catch(error) {
             if(error instanceof AxiosError) {
                 assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
-        
-                assert.isString(error.response!.data.message)
                 assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
                 return;
             }
@@ -221,12 +217,102 @@ describe('POST /poem', () => {
             "poet":  "639b5cf712eec0bb274cecd4",
         }).catch(error => {
             if(error instanceof AxiosError) {
-                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
-                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID);
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.VERSES);
+                return;
+            }
+            throw error;
+        })
+    })
+})
+
+describe('PUT /poem/:id', () => {
+    let poemId: string;
+    before(async () => {
+        const data = {
+            "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        };
+        const req = await baseHttp.post('poem', data)
+        poemId = req.data._id;
+    })
+
+    it('updates poet data successfuly with valid data', async() => {
+        const req = await baseHttp.put(`poem/${poemId}`, {intro: "testing"})
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.put(`poem/${poemId}`, {intro: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.INTRO);
                 return;
             }
             throw error;
         })
 
+        await baseHttp.put(`poem/${poemId}`, {poet: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POET);
+                return;
+            }
+            throw error;
+        })
+        
+        await baseHttp.put(`poem/${poemId}`, {verses: {first: 'safsasf', sec: 'stsrsar'}})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.VERSES);
+                return;
+            }
+            throw error;
+        })
     })
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = poemId.replace(poemId[5], 'a');
+            await baseHttp.put(`poem/${corruptedId}`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID)    
+                return;
+            }
+            throw error;
+        }
+
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await baseHttp.put(`poem/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
+    })
+    
+    after(() => {baseHttp.delete(`/poem/${poemId}`)})
 })
