@@ -13,14 +13,17 @@ const orderSchema = new Schema(
     name: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 50},
     },
     phone: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 50},
     },
     address: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 50},
     },
     reviewed: {
       type: Boolean,
