@@ -40,7 +40,6 @@ export class PoemRoute implements IRoute {
       '/poem',
       validate([
         body('intro')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.INTRO),
@@ -48,13 +47,11 @@ export class PoemRoute implements IRoute {
         body('poet').isMongoId().withMessage(ERROR_MSG.POET),
 
         body('verses.*.first')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),
 
         body('verses.*.sec')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.VERSES),

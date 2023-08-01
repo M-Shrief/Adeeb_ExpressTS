@@ -91,7 +91,7 @@ export class PoemController {
           ERROR_MSG.NOT_VALID,
           true,
         );
-      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, poems});
+      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, ...poems});
     } catch (error) {
       next(error);
     }

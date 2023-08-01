@@ -9,6 +9,7 @@ const poemSchema = new Schema(
     intro: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 50},
     },
     poet: { type: Schema.Types.ObjectId, ref: 'Poet', required: true },
     verses: {

@@ -75,3 +75,158 @@ describe('GET /poem/:id', async () => {
 
     })
 })
+
+describe('POST /poems', () => {
+    const data = [        
+        {
+            "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        },
+        {
+            "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            "poet": "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        },
+        {
+            "poet": "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        }
+    ];
+    const testPoemsId: string[] = [];
+    afterEach(() => {
+        testPoemsId.forEach(async (id) => {
+            await baseHttp.delete(`poem/${id}`);
+        })
+    })
+    it('it saves valid entries correctly, and returns valid & non-valid entries', async () => {
+        const req = await baseHttp.post('/poems', data);
+        const poemsIds = req.data.newPoems.map((poem: PoemType) => poem._id)
+        testPoemsId.push(...poemsIds);
+
+        assert.strictEqual(req.status, HttpStatusCode.CREATED)
+
+        assert.isNotEmpty(req.data.newPoems);
+        assert.containsAllKeys(req.data.newPoems[0], data[0]);
+
+        assert.isNotEmpty(req.data.nonValidPoems);
+        assert.containsAllKeys(req.data.nonValidPoems[0], data[2]);
+    })
+})
+
+describe('POST /poem', () => {
+    it('it post valid data correctly', async() => {
+        const data = {
+            "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        };
+        const req = await baseHttp.post('poem', data)
+
+        assert.equal(req.status, HttpStatusCode.CREATED)
+        assert.containsAllKeys(req.data, data);
+
+        after(() => { baseHttp.delete(`poet/${req.data._id}`)})
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.post('/poem', {
+            // "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.INTRO);
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.post('/poem', {
+            "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            // "poet":  "639b5cf712eec0bb274cecd4",
+            "verses": [
+            {
+                "first": "فهوَ أمواجُ ظلامٍ .. لا تَرَى",
+                "sec": "لا تُبَالي .. لا تَعِي .. لا تَحْتَمي",
+            },
+            {
+                "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
+                "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+            }
+            ],
+            "reviewed": true
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POET);
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.post('/poem', {
+            "intro": "حسرةٌ ولَّت, و أخرى أقبلت",
+            "poet":  "639b5cf712eec0bb274cecd4",
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID);
+                return;
+            }
+            throw error;
+        })
+
+    })
+})
