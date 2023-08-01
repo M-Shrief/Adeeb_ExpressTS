@@ -12,7 +12,6 @@ const signupData = {
     "name": "E2E Test",
     "phone": "01235554568",
     "password": "P@ssword1",
-    "address": "10th street"
 };
 
 const loginData = {
@@ -69,5 +68,65 @@ describe('POST /partner/login', () => {
         })        
  
     })
+})
 
+describe('POST /partner/signup', () => {
+    it('partner signup successfully with correct data and it return the accessToken', async () => {
+        
+        const req = await baseHttp.post('partner/signup', signupData);
+
+        assert.equal(req.status, HttpStatusCode.CREATED);
+
+        assert.isTrue(req.data.Success);
+
+        assert.containsAllKeys(req.data.partner, ['_id', 'name', 'phone']);
+
+        assert.isString(req.data.accessToken);
+
+        await withAuthHttp(req.data.accessToken).delete(`partner/${req.data.partner._id}`) 
+    });
+    
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.post('/partner/signup', {
+            // "name": "E2E Test",
+            "phone": "01235554467",
+            "password": "P@ssword1"
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NAME)
+                return;
+            }
+            throw error;
+        });
+
+        await baseHttp.post('/partner/signup', {
+            "name": "E2E Test",
+            // "phone": "01235554467",
+            "password": "P@ssword1"
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PHONE)
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.post('/partner/signup', {
+            "name": "E2E Test",
+            "phone": "01235554567"
+            // password: ""
+        })
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PASSWORD)
+                return;
+            }
+            throw error;
+        })
+    })
 })
