@@ -52,14 +52,14 @@ describe('GET /proses/random', async () => {
 })
 
 describe('GET /prose/:id', () => {
-    let chosenVerseId: string;
+    let proseId: string;
     before(async () => {
         const req = await baseHttp.get('proses');
-        chosenVerseId = req.data[0]._id;
+        proseId = req.data[0]._id;
     })
 
     it('Responds with the right JSON body', async() => {
-        const req = await baseHttp.get(`prose/${chosenVerseId}`)
+        const req = await baseHttp.get(`prose/${proseId}`)
 
         assert.equal(req.status, HttpStatusCode.OK);
         assert.isDefined(req.data._id);
@@ -71,7 +71,7 @@ describe('GET /prose/:id', () => {
     
     it('gets 404 with nonExisting MongoId', async () => {
         try {
-            const corruptedId = chosenVerseId.replace(chosenVerseId[5], 'a');
+            const corruptedId = proseId.replace(proseId[5], 'a');
             await baseHttp.get(`prose/${corruptedId}`);
         } catch(error) {
             if(error instanceof AxiosError) {
@@ -194,5 +194,134 @@ describe('POST /prose', () => {
             }
             throw error;
         })        
+    })
+})
+
+describe('PUT /prose/:id', () => {
+    let proseId: string;
+    before(async () => {
+        const data = {
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "tags": "حكمة, حب, العلم",
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+            "reviewed": true
+        };
+        const req = await baseHttp.post('prose', data)
+        proseId = req.data._id;
+    })
+
+    it('updates prose data successfuly with valid data', async() => {
+        const req = await baseHttp.put(`/prose/${proseId}`, {tags: 'الحكمة,الفخر,الشجاعة'});
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+        await baseHttp.put(`prose/${proseId}`, {poet: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.POET);
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.put(`prose/${proseId}`, {qoute: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.QOUTE);
+                return;
+            }
+            throw error;
+        })
+
+        await baseHttp.put(`prose/${proseId}`, {tags: 1221})
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.TAGS);
+                return;
+            }
+            throw error;
+        })
+    })        
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = proseId.replace(proseId[5], 'a');
+            await baseHttp.put(`prose/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await baseHttp.put(`prose/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
+    })
+
+    after(() => { baseHttp.delete(`prose/${proseId}`)})
+})
+
+describe('DELETE /prose/:id', () => {
+    let proseId: string;
+    before(async () => {
+        const data = {
+            "poet":  "639b5cf712eec0bb274cecd4",
+            "tags": "حكمة, حب, العلم",
+            "qoute": "اشتريتُ الكتاب، وكان خسارةً، ولكن أين المفرُّ؟ فكلّ مُحِبٍّ للقراءة مثلي يُوقعه حبُّه مرارًا وتكرارًا في الخسارة بعد الخسارة، ثمّ لا يتوبُ! هكذا كُتُب زماننا..",
+            "reviewed": true
+        };
+        const req = await baseHttp.post('prose', data)
+        
+        proseId = req.data._id;
+    })
+
+    it('Delete poem/:id successfully', async () => {
+        const req = await baseHttp.delete(`/prose/${proseId}`);
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('gets 404 with nonExisting MongoId', async () => {
+        try {
+            const corruptedId = proseId.replace(proseId[5], 'a');
+            await baseHttp.delete(`prose/${corruptedId}`)
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+    })
+
+    it('gets 400 with wrong :id format', async () => {
+        try {
+            await baseHttp.delete(`prose/22`);
+        } catch(error) {
+            if(error instanceof AxiosError) {
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
+                return;
+            }
+            throw error;
+        }
+
     })
 })
