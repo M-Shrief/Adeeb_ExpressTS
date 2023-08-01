@@ -13,7 +13,7 @@ describe('GET /poets', async () => {
     it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get('poets');
         
-        assert.strictEqual(req.status, 200);
+        assert.strictEqual(req.status, HttpStatusCode.OK);
         const poets: PoetType['details'][] = req.data;
 
         assert.isArray(poets);
@@ -30,7 +30,7 @@ describe('GET /poet/:id', async () => {
     it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get(`poet/${poetId}`);
         
-        assert.strictEqual(req.status, 200);
+        assert.strictEqual(req.status, HttpStatusCode.OK);
         const poet: PoetType = req.data;
 
         assert.isDefined(poet.details._id)
@@ -49,7 +49,7 @@ describe('GET /poet/:id', async () => {
             await baseHttp.get(`poet/${corruptedId}`);
         } catch(error) {
             if(error instanceof AxiosError) {
-                assert.strictEqual(error.response!.status, 404);
+                assert.strictEqual(error.response!.status, HttpStatusCode.NOT_FOUND);
         
                 assert.isString(error.response!.data.message)
                 assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
@@ -65,7 +65,7 @@ describe('GET /poet/:id', async () => {
             await baseHttp.get(`poet/22`);
         } catch(error) {
             if(error instanceof AxiosError) {
-                assert.strictEqual(error.response!.status, 400);
+                assert.strictEqual(error.response!.status, HttpStatusCode.BAD_REQUEST);
         
                 assert.isString(error.response!.data.message)
                 assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND)    
