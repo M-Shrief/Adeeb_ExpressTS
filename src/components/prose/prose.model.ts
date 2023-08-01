@@ -13,10 +13,12 @@ const proseShema = new Schema(
     tags: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 50}
     },
     qoute: {
       type: String,
       required: true,
+      length: {minlength: 4, maxlength: 300}
     },
     reviewed: {
       type: Boolean,

@@ -93,7 +93,7 @@ export class ProseController {
           ERROR_MSG.NOT_VALID,
           true,
         );
-      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, proses});
+      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, ...proses});
     } catch (error) {
       next(error);
     }

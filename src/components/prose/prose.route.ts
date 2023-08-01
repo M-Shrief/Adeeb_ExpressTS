@@ -42,13 +42,11 @@ export class ProseRoute implements IRoute {
         body('poet').isMongoId().withMessage(ERROR_MSG.POET),
 
         body('tags')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.TAGS),
 
         body('qoute')
-          .isLength({ min: 4, max: 400 })
           .isString()
           .withMessage(ERROR_MSG.QOUTE),
 
@@ -65,14 +63,12 @@ export class ProseRoute implements IRoute {
 
         body('tags')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.TAGS),
 
         body('qoute')
           .optional()
-          .isLength({ min: 4, max: 400 })
           .isString()
           .withMessage(ERROR_MSG.QOUTE),
 
