@@ -37,7 +37,6 @@ export class PartnerRoute implements IRoute {
       '/partner/signup',
       validate([
         body('name')
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.NAME),
@@ -59,16 +58,14 @@ export class PartnerRoute implements IRoute {
       '/partner/login',
       validate([
         body('phone')
-          .isLength({ min: 4, max: 20 })
           .isString()
           .escape()
-          .withMessage(ERROR_MSG.NOT_VALID),
+          .withMessage(ERROR_MSG.PHONE),
 
         body('password')
-          .isLength({ min: 4, max: 20 })
           .isString()
           .escape()
-          .withMessage(ERROR_MSG.NOT_VALID),
+          .withMessage(ERROR_MSG.PASSWORD),
       ]),
       this.controller.login,
     );
@@ -81,7 +78,6 @@ export class PartnerRoute implements IRoute {
 
           body('name')
             .optional()
-            .isLength({ min: 4, max: 50 })
             .isString()
             .escape()
             .withMessage(ERROR_MSG.NAME),
