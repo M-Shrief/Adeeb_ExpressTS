@@ -7,7 +7,6 @@ import HttpStatusCode from '../../utils/httpStatusCode';
 // Types
 import { PoetType, ERROR_MSG } from '../../interfaces/poet.interface';
 
-let poetId: string;
 
 describe('GET /poets', async () => {
     it('Responds with the right JSON body', async () => {
@@ -20,13 +19,15 @@ describe('GET /poets', async () => {
         assert.isDefined(poets[0]._id)
         assert.isDefined(poets[0].name)
         assert.isDefined(poets[0].time_period)
-
-
-        poetId = poets[0]._id;
     })
 })
 
 describe('GET /poet/:id', async () => {
+    let poetId: string;
+    before(async () => {
+        const req = await baseHttp.get('poets');
+        poetId = req.data[0]._id;
+    })
     it('Responds with the right JSON body', async () => {
         const req = await baseHttp.get(`poet/${poetId}`);
         
@@ -80,9 +81,9 @@ describe('GET /poet/:id', async () => {
 describe('POST /poets', () => {
     const data = [
         {
-            "name": "التهامي",
+            "name": "Testing",
             "time_period": "عباسي",
-            "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
             "reviewed": true,
         },
         {
@@ -122,9 +123,9 @@ describe('POST /poets', () => {
 
 describe('POST /poet', () => {
     const data =  {
-        "name": "التهامي",
+        "name": "Testing",
         "time_period": "عباسي",
-        "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+        "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
         "reviewed": true,
     } as PoetType['details'];
 
@@ -133,15 +134,15 @@ describe('POST /poet', () => {
 
         assert.containsAllKeys(req.data, data);
         
-        after(() => { baseHttp.delete(`poet/${poetId}`)})
+        after(() => { baseHttp.delete(`poet/${req.data._id}`)})
     })
 
     it('returns the correct error message with invalid data', async () => {
             
         await baseHttp.post('/poet', {
-            // "name": 'التهامي',
+            // "name": 'Testing',
             "time_period": "عباسي",
-            "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
             "reviewed": true,
         }).catch(error => {
             if(error instanceof AxiosError) {
@@ -153,9 +154,9 @@ describe('POST /poet', () => {
         })
 
       await baseHttp.post('/poet', {
-            "name": 'التهامي',
+            "name": 'Testing',
             // "time_period": "عباسي",
-            "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
             "reviewed": true,
         }).catch(error => {
             if(error instanceof AxiosError) {
@@ -168,14 +169,152 @@ describe('POST /poet', () => {
   
 
         await baseHttp.post('/poet', {
-            "name": 'التهامي',
+            "name": 'Testing',
             "time_period": "عباسي",
-            // "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            // "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
             "reviewed": true,
         }).catch(error => {
             if(error instanceof AxiosError) {
                 assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
                 assert.equal(error.response!.data.message, ERROR_MSG.BIO);
+                return;
+            }
+            throw error;
+        })
+    })
+})
+
+describe('PUT /poet/:id', () => {
+    const data =  {
+        "name": "Testing",
+        "time_period": "عباسي",
+        "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+        "reviewed": true,
+    } as PoetType['details'];
+    let poetId: string;
+    before(async () => {
+        const req = await baseHttp.post('poet', data)
+        poetId = req.data._id;
+    })
+
+
+    it('updates poet data successfuly with valid data', async ( ) => {
+
+        const req = await baseHttp.put(`poet/${poetId}`);
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('returns the correct error message with invalid data', async () => {
+            
+        await baseHttp.put(`poet/${poetId}`, {
+            // "name": 'Testing',
+            "time_period": "عباسي",
+            "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "reviewed": true,
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NAME);
+                return;
+            }
+            throw error;
+        })
+
+      await baseHttp.put(`poet/${poetId}`, {
+            "name": 'Testing',
+            // "time_period": "عباسي",
+            "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "reviewed": true,
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.TIME_PERIOD);
+                return;
+            }
+            throw error;
+        })
+  
+
+        await baseHttp.put(`poet/${poetId}`, {
+            "name": 'Testing',
+            "time_period": "عباسي",
+            // "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+            "reviewed": true,
+        }).catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.BIO);
+                return;
+            }
+            throw error;
+        })
+    })
+
+    it('returns 406 with nonExisting id', async () => {
+        const corruptedId = poetId.replace(poetId[5], 'a');
+        await baseHttp.put(`poet/${corruptedId}`, data)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_ACCEPTABLE);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_VALID);
+                return;
+            }
+            throw error;
+        })
+    })
+
+    it('returns 404 with nonExisting id', async () => {
+        await baseHttp.put(`poet/22`, data)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND);
+                return;
+            }
+            throw error;
+        })
+    })
+
+
+    after(async () => { await baseHttp.delete(`poet/${poetId}`)})  
+})
+
+describe('DELETE /poet/:id', () => {
+    const data =  {
+        "name": "Testing",
+        "time_period": "عباسي",
+        "bio": "أبو الحسن علي بن محمد بن فهد Testing. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال",
+        "reviewed": true,
+    } as PoetType['details'];
+    let poetId: string;
+    before(async () => {
+        const req = await baseHttp.post('poet', data)
+        poetId = req.data._id;
+    })
+    it('Delete poet/:id successfully', async () => {
+        const req = await baseHttp.delete(`/poet/${poetId}`);
+        assert.equal(req.status, HttpStatusCode.ACCEPTED);
+    })
+
+    it('returns 406 with nonExisting id', async () => {
+        const corruptedId = poetId.replace(poetId[5], 'a');
+        await baseHttp.delete(`poet/${corruptedId}`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND);
+                return;
+            }
+            throw error;
+        })
+    })
+
+    it('returns 404 with nonExisting id', async () => {
+        await baseHttp.delete(`poet/22`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_FOUND);
                 return;
             }
             throw error;

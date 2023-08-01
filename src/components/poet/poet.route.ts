@@ -60,21 +60,18 @@ export class PoetRoute implements IRoute {
 
         body('name')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.NAME),
 
         body('time_period')
           .optional()
-          .isLength({ min: 4, max: 50 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.TIME_PERIOD),
 
         body('bio')
           .optional()
-          .isLength({ min: 4, max: 300 })
           .isString()
           .escape()
           .withMessage(ERROR_MSG.BIO),
