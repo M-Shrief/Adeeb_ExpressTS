@@ -56,7 +56,7 @@ const guestOrder = {
 }
 
 const partnerOrder = {
-    "partner":"64b9a77a87178b22560a8e73",
+    "partner":"64c94dc632295fae1b7fb987",
     "name": "The Den Man",
     "phone": "01235554567",
     "address":"10th streat Cairo",
@@ -162,7 +162,7 @@ describe('get guestOrders POST /orders/guest', () => {
         assert.containsAllKeys(orders[0].products[0], guestOrder.products[0]);
     })    
 
-    it("gets guests' orders successfully with valid data", async () => {
+    it("return not found for unknown data", async () => {
         await baseHttp.post('/orders/guest', {
             "name":"Not found Order",
             "phone":"01235522580"
@@ -194,6 +194,90 @@ describe('get guestOrders POST /orders/guest', () => {
             if(error instanceof AxiosError) {
                 assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
                 assert.equal(error.response!.data.message, ERROR_MSG.PHONE);
+                return;
+            }   
+            throw error;
+        })
+    })
+
+    after(() => {baseHttp.delete(`order/${orderId}`)})
+})
+
+describe('get partnersOrders POST /orders/:partner', () => {
+    let orderId: string;
+    let partnerId: string;
+    let token: string;
+    before(async () => { 
+        const postOrder = await baseHttp.post('/order', partnerOrder)
+        orderId = postOrder.data._id;
+
+        const loginReq = await baseHttp.post('/partner/login', {
+            "phone": "01235554567",
+            "password": "P@ssword1"
+        })
+        partnerId = loginReq.data.partner._id
+        token = loginReq.data.accessToken
+    })
+
+    it("gets Partners' orders successfully with valid data", async () => {
+        const req = await withAuthHttp(token).get(`/orders/${partnerId}`)
+
+        assert.equal(req.status, HttpStatusCode.OK);
+        const orders: OrderType[] = req.data;
+
+        assert.isArray(orders);
+
+        assert.isString(orders[0]._id);
+        assert.isString(orders[0].partner);
+        assert.isString(orders[0].name);
+        assert.isString(orders[0].phone);
+        assert.isString(orders[0].address);
+        assert.isBoolean(orders[0].completed);
+        assert.isBoolean(orders[0].reviewed);
+        assert.isString(orders[0].createdAt);
+
+        assert.isArray(orders[0].products);
+        assert.containsAllKeys(orders[0].products[0], partnerOrder.products[0]);
+    })    
+
+    it("return not available for 0 orders", async () => {
+        await withAuthHttp(token).get(`/orders/${partnerId}`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_AVAILABLE);
+                return;
+            }   
+            throw error;
+        })
+    }) 
+
+    it('returns the correct error message with invalid data', async () => {
+        await withAuthHttp('124142').get(`/orders/${partnerId}`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.UNAUTHORIZED);
+                assert.equal(error.response!.data.message, 'Unautorized for this request');
+                return;
+            }   
+            throw error;
+        })
+
+        await withAuthHttp(token).get(`/orders/64c9881be1d3e8f030569a6c`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.NOT_FOUND);
+                assert.equal(error.response!.data.message, ERROR_MSG.NOT_AVAILABLE);
+                return;
+            }   
+            throw error;
+        })
+
+        await withAuthHttp(token).get(`/orders/521521`)
+        .catch(error => {
+            if(error instanceof AxiosError) {
+                assert.equal(error.response!.status, HttpStatusCode.BAD_REQUEST);
+                assert.equal(error.response!.data.message, ERROR_MSG.PARTNER);
                 return;
             }   
             throw error;

@@ -50,6 +50,7 @@ export class OrderRoute implements IRoute {
       ],
       this.controller.indexPartnerOrders,
     );
+    
     this.router.post(
       '/order',
       [
