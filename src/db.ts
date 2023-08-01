@@ -1,11 +1,14 @@
 import mongoose from 'mongoose';
 // config
-import { DB_NAME, DB_URL } from './config';
+import { DB_NAME,DB_NAME_TEST, DB_URL } from './config';
 // Utils
 import { logger } from './utils/logger';
 
 const options = {
-  dbName: DB_NAME,
+  // for development
+  // dbName: DB_NAME,
+  // for E2E tests
+  dbName: DB_NAME_TEST,
   autoIndex: true,
   // minPoolSize: 5, // Maintain up to x socket connections
   // maxPoolSize: 10, // Maintain up to x socket connections
@@ -19,7 +22,7 @@ mongoose.set('strictQuery', true);
 mongoose
   .connect(DB_URL as string, options)
   .then(() => {
-    logger.info('Mongoose connection done');
+    logger.info(`Mongoose connection done`);
   })
   .catch((e) => {
     logger.info('Mongoose connection error');
