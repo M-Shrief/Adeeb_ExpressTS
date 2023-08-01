@@ -33,7 +33,6 @@ export class PoetRoute implements IRoute {
     );
     this.router.post(
       '/poet',
-      // removed isEmpty(), to responds with the right message
       validate([
         body('name')
           .isLength({ min: 4, max: 50 })
