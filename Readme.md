@@ -12,10 +12,11 @@
 
 - characteristics:
 
-  - _JWT_ Authentication & Authorization
+  - E2E tests with Mocha & Chai
+  - JWT Authentication & Authorization
   - Centralized Error Handling
-  - Data Validation with _Yup_ and _express-validator_
-  - Security best practices from _OWASP_
+  - Data Validation with Yup and express-validator
+  - Security best practices from OWASP
   - …and more
 
 ## File Structure
@@ -47,6 +48,12 @@
 
   - _route_ file for establishing endpoints and controllers to every modules.
     Beside validating requests, and jwt authentication. Using (\*.route.ts)
+    naming convention for every module.
+
+  - _schema_ file for validation data for post and update methods by **Yup**.
+    Using (\*.schema.ts) naming convention for every module.
+    
+  - _spec_ file for E2E test for every component. Using (\*.spec.ts)
     naming convention for every module.
 
 - _./interfaces_ file for types' declarations, using (\*.interface.ts) naming
