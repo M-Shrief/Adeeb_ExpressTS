@@ -162,7 +162,7 @@ describe('POST /poem', () => {
         assert.equal(req.status, HttpStatusCode.CREATED)
         assert.containsAllKeys(req.data, data);
 
-        after(() => { baseHttp.delete(`poet/${req.data._id}`)})
+        after(() => { baseHttp.delete(`poem/${req.data._id}`)})
     })
 
     it('returns the correct error message with invalid data', async () => {
