@@ -98,7 +98,7 @@ export class ChosenVerseController {
           ERROR_MSG.NOT_VALID,
           true,
         );
-      res.status(HttpStatusCode.CREATED).send({maxItemsToBeInserted: 10, ...chosenVerses});
+      res.status(HttpStatusCode.CREATED).send(chosenVerses);
     } catch (error) {
       next(error);
     }

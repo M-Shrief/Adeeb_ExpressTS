@@ -78,7 +78,7 @@ export class PoemService {
     const validPoems: PoemType[]  =  await filterAsync(poemsData, isValid)
     const nonValidPoems: PoemType[]  =  await filterAsync(poemsData, isNotValid)
 
-    const newPoems = await Poem.insertMany(validPoems, {limit: 10});
+    const newPoems = await Poem.insertMany(validPoems);
     if (newPoems.length == 0) return false;
 
     const results = {newPoems, nonValidPoems}

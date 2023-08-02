@@ -74,7 +74,7 @@ export class PoetService {
       const validPoets: PoetType['details'][]  =  await filterAsync(poetsData, isValid)
       const nonValidPoets: PoetType['details'][]  =  await filterAsync(poetsData, isNotValid)
   
-      const newPoets = await Poet.insertMany(validPoets, {limit: 10});
+      const newPoets = await Poet.insertMany(validPoets);
       if (newPoets.length == 0) return false;
   
       const results = {newPoets, nonValidPoets}
