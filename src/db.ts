@@ -1,14 +1,13 @@
 import mongoose from 'mongoose';
 // config
-import { DB_NAME,DB_NAME_TEST, DB_URL } from './config';
+import { DB_NAME, DB_URL } from './config';
 // Utils
 import { logger } from './utils/logger';
 
 const options = {
   // for development
-  // dbName: DB_NAME,
+  dbName: DB_NAME,
   // for E2E tests
-  dbName: DB_NAME_TEST,
   autoIndex: true,
   // minPoolSize: 5, // Maintain up to x socket connections
   // maxPoolSize: 10, // Maintain up to x socket connections
