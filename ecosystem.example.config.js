@@ -1,9 +1,8 @@
 const fs = require('fs');
 
-const jwtPrivateBuffer = fs.readFileSync('./jwtRSA256-private.pem');
-const jwtPrivate = Buffer.from(jwtPrivateBuffer).toString('ascii');
+const jwtPrivate = fs.readFileSync('./jwtRSA256-private.pem').toString()
 
-module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage/application-declaration/#attributes-available
+module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage       /application-declaration/#attributes-available
     apps: [
       {
         name: "Adeeb_ExpressTS_Mongo",
