@@ -8,4 +8,5 @@ export const {
   DB_URL,
   DB_NAME,
   JWT_PRIVATE,
+  CORS_ORIGIN
 } = process.env;

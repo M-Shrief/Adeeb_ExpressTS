@@ -6,7 +6,7 @@ module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage     
     apps: [
       {
         name: "Adeeb_ExpressTS_Mongo",
-        instances: 0, // 0 means create instances to number of CPU cores on host
+        instances: 1, // 0 means create instances to number of CPU cores on host
         script: "dist/index.js",
         watch: true,
         ignore_watch: [
@@ -33,6 +33,7 @@ module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage     
           SECRET_KEY:'',
           LOG_DIR:'./',
           LOG_FORMAT:'',
+          CORS_ORIGIN: 'http://localhost:3000',        
         },
         env_test: {
           NODE_ENV: 'production',
@@ -44,6 +45,7 @@ module.exports = { // very good docs at http://pm2.keymetrics.io/docs/usage     
           SECRET_KEY:'',
           LOG_DIR:'./',
           LOG_FORMAT:'',
+          CORS_ORIGIN: 'http://localhost:3000',        
         }
       }
     ],
