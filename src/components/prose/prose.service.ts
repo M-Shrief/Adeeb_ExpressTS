@@ -3,7 +3,6 @@ import { Prose } from './prose.model';
 // Types
 import { ProseType } from '../../interfaces/prose.interface';
 // Utils
-import { shuffle } from '../../utils/shuffle';
 import { filterAsync } from '../../utils/asyncFilterAndMap';
 // Schema
 import { createSchema, updateSchema } from './prose.schema';
@@ -13,7 +12,6 @@ export class ProseService {
       {},
       { poet: 1, tags: 1, qoute: 1, reviewed: 1 },
     ).populate('poet', 'name');
-    shuffle(proses);
     if (proses.length === 0) return false;
     return proses;
   }

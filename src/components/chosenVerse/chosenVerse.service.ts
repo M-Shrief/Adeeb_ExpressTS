@@ -3,7 +3,6 @@ import { ChosenVerse } from './chosenVerse.model';
 // Types
 import { ChosenVerseType } from '../../interfaces/chosenVerse.interface';
 // Utils
-import { shuffle } from '../../utils/shuffle';
 import { filterAsync } from '../../utils/asyncFilterAndMap';
 //Schema
 import { createSchema, updateSchema } from './chosenVerse.schema';
@@ -13,7 +12,6 @@ export class ChosenVerseService {
       {},
       { reviewed: 1, tags: 1, verses: 1, poet: 1, poem: 1 },
     ).populate('poet', 'name');
-    shuffle(chosenVerses);
     if (chosenVerses.length === 0) return false;
     return chosenVerses;
   }
