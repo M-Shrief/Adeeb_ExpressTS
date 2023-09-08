@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { body, param } from 'express-validator';
+import { body } from 'express-validator';
 // Controller
 import { PartnerController } from './partner.controller';
 // Types
@@ -23,12 +23,11 @@ export class PartnerRoute implements IRoute {
 
   private initializeRoutes() {
     this.router.get(
-      '/partner/:id',
+      '/partner/me',
       [
         jwtToken(true),
         guard.check(['partner:read', 'partner:write']),
         authErrorHandler,
-        validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
         setCache,
       ],
       this.controller.indexInfo,
@@ -72,14 +71,12 @@ export class PartnerRoute implements IRoute {
     );
     this.router.post('/partner/logout', this.controller.logout);
     this.router.put(
-      '/partner/:id',
+      '/partner/me',
       [
         jwtToken(true),
         guard.check(['partner:read', 'partner:write']),
         authErrorHandler,
         validate([
-          param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
-
           body('name')
             .optional()
             .isString()
@@ -104,12 +101,11 @@ export class PartnerRoute implements IRoute {
       this.controller.update,
     );
     this.router.delete(
-      '/partner/:id',
+      '/partner/me',
       [
         jwtToken(true),
         guard.check(['partner:read', 'partner:write']),
         authErrorHandler,
-        validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
       ],
       this.controller.remove,
     );

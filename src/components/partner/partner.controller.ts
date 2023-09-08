@@ -1,20 +1,22 @@
 import {  NextFunction, Request, Response } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
 // Services
 import { PartnerService } from './partner.service';
 // Types
 import { ERROR_MSG } from '../../interfaces/partner.interface';
 // Utils
-import { signToken } from '../../utils/auth';
+import { decodeToken, signToken } from '../../utils/auth';
 import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 export class PartnerController {
   private partnerService = new PartnerService();
 
-  private signToken = (name: string) =>
+  private signToken = (name: string, _id: string) =>
     signToken(
       {
-        Name: name,
+        name,
+        _id,
         permissions: ['partner:read', 'partner:write'],
       },
       {
@@ -29,7 +31,8 @@ export class PartnerController {
     next: NextFunction,
   ) => {
     try {
-      const partner = await this.partnerService.getInfo(req.params.id);
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const partner = await this.partnerService.getInfo(decoded._id);
 
       if (!partner)
         throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
@@ -48,7 +51,7 @@ export class PartnerController {
           ERROR_MSG.NOT_VALID,
           true,
         );
-      const accessToken = this.signToken(partner.name);
+      const accessToken = this.signToken(partner.name, partner._id);
       res.status(HttpStatusCode.CREATED).json({
         Success: true,
         partner: {
@@ -76,7 +79,7 @@ export class PartnerController {
           true,
         );
 
-      const accessToken = this.signToken(partner.name);
+      const accessToken = this.signToken(partner.name, partner._id);
       res.status(HttpStatusCode.ACCEPTED).json({
         success: true,
         partner: {
@@ -97,7 +100,8 @@ export class PartnerController {
 
   public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await this.partnerService.update(req.params.id, req.body);
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const partner = await this.partnerService.update(decoded._id, req.body);
       if (!partner)
         throw new AppError(
           HttpStatusCode.NOT_ACCEPTABLE,
@@ -112,7 +116,8 @@ export class PartnerController {
 
   public remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await this.partnerService.remove(req.params.id);
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const partner = await this.partnerService.remove(decoded._id);
       if (!partner)
         throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
       res.status(HttpStatusCode.ACCEPTED).send('Deleted Successfully');
