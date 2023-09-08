@@ -1,5 +1,5 @@
 import { object, boolean } from 'yup';
-import { nameSchema, timePeriodSchema, bioSchema } from '../../schemas';
+import { nameSchema, timePeriodSchema, bioSchema } from '../../utils/schemas';
 
 export const createSchema = object({
   name: nameSchema.required(),
