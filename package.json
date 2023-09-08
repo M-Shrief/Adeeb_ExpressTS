@@ -1,13 +1,14 @@
 {
   "name": "adeeb",
   "version": "1.0.0",
-  "description": "",
+  "description": "**Overview**: It's concerned with Arabic literature. It assumes a business model that enables you to order a specific piece of literature to be printed with especial colors and font. Then it'll be delivered to the customer, with the ability for the customer to follow up the process. And for special customers, it provides them with the ability to make bulk orders fast and easy. And if they’re willing to signup, they can review all of their past orders.",
   "main": "dist/index.js",
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
     "dev": "pm2 start ecosystem.config.js --env development",
-    "test:e2e": "ts-mocha -p ./tsconfig.json src/components/*/*.spec.ts",
+    "dev:test": "pm2 start ecosystem.config.js --env test",
+    "test:e2e": "ts-mocha -p ./tsconfig.json src/tests/e2e/*.spec.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
   },
