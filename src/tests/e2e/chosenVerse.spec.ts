@@ -104,8 +104,8 @@ describe('GET /chosenverse/:id', () => {
 describe('POST /chosenverses', () => {
     const data = [
         {
-            "poet": "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            "poet": "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
@@ -117,8 +117,8 @@ describe('POST /chosenverses', () => {
         },
 
         {
-            "poet":  "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            "poet":  "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
@@ -130,7 +130,7 @@ describe('POST /chosenverses', () => {
         },
 
         {
-            "poem": "6371eb6690c2ad965846c221",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
@@ -166,8 +166,8 @@ describe('POST /chosenverses', () => {
 describe('POST /chosenverse', () => {
     it('it post valid data correctly', async() => {
         const data = {
-            "poet": "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            "poet": "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
@@ -187,8 +187,8 @@ describe('POST /chosenverse', () => {
 
     it('returns the correct error message with invalid data', async () => {
         await baseHttp.post('/chosenverse', {
-            // "poet": "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            // "poet": "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
@@ -207,8 +207,8 @@ describe('POST /chosenverse', () => {
         })        
 
         await baseHttp.post('/chosenverse', {
-            "poet": "6371ea89885e286801faccaa",
-            // "poem": "6371eb6690c2ad965846c221",
+            "poet": "6371e9ce885e286801facca2",
+            // "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
@@ -226,8 +226,8 @@ describe('POST /chosenverse', () => {
             throw error;
         })        
         await baseHttp.post('/chosenverse', {
-            "poet": "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            "poet": "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             // "tags": "الفخر",
             "verses": [
             {
@@ -244,8 +244,8 @@ describe('POST /chosenverse', () => {
             throw error;
         })        
         await baseHttp.post('/chosenverse', {
-            "poet": "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            "poet": "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             // "verses": [
@@ -269,8 +269,8 @@ describe('PUT /chosenverse/:id', () => {
     let chosenVerseId: string;
     before(async () => {
         const data = {
-            "poet": "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            "poet": "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
@@ -366,8 +366,8 @@ describe('DELETE /chosenverse/:id', () => {
     let chosenVerseId: string;
     before(async () => {
         const data = {
-            "poet": "6371ea89885e286801faccaa",
-            "poem": "6371eb6690c2ad965846c221",
+            "poet": "6371e9ce885e286801facca2",
+            "poem": "64fb9089273e08a77002d688",
             "reviewed": true,
             "tags": "الفخر",
             "verses": [
