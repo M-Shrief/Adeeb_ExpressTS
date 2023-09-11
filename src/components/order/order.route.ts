@@ -40,13 +40,13 @@ export class OrderRoute implements IRoute {
       ],
       this.controller.indexGuestOrders,
     );
+
     this.router.get(
-      '/orders/:partner',
+      '/orders/partner',
       [
         jwtToken(true),
         guard.check(['partner:read', 'partner:write']),
         authErrorHandler,        
-        validate([param('partner').isMongoId().withMessage(ERROR_MSG.PARTNER)])
       ],
       this.controller.indexPartnerOrders,
     );

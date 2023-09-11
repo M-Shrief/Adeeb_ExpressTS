@@ -1,6 +1,7 @@
 import { ChosenVerseType } from './chosenVerse.interface';
 import { PoemType } from './poem.interface';
 import { ProseType } from './prose.interface';
+import { PoetryType } from './__types__';
 
 export interface PoetType {
   details: {
@@ -11,6 +12,7 @@ export interface PoetType {
     reviewed: boolean;
   };
   poems: PoemType[];
+  poetry?: PoetryType;
   chosenVerses: ChosenVerseType[];
   proses: ProseType[];
 }

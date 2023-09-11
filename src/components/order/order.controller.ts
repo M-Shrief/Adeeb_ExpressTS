@@ -3,9 +3,11 @@ import { NextFunction, Request, Response } from 'express';
 import { OrderService } from './order.service';
 // Types
 import { ERROR_MSG } from '../../interfaces/order.interface';
+import { JwtPayload } from 'jsonwebtoken';
 // Utils
 import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
+import { decodeToken } from '../../utils/auth';
 
 export class OrderController {
   private orderService = new OrderService();
@@ -38,9 +40,8 @@ export class OrderController {
     next: NextFunction,
   ) => {
     try {
-      const orders = await this.orderService.getPartnerOrders(
-        req.params.partner,
-      );
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const orders = await this.orderService.getPartnerOrders(decoded.id);
       if (!orders)
         throw new AppError(
           HttpStatusCode.NOT_FOUND,
