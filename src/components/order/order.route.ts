@@ -52,61 +52,108 @@ export class OrderRoute implements IRoute {
     );
 
     this.router.post(
-      '/order',
-      [
-        jwtToken(false),
-        authErrorHandler,       
+      '/order/guest',
+      [      
         validate([
-        body('partner').optional().isMongoId().withMessage(ERROR_MSG.PARTNER),
+          body('name')
+            .isString()
+            .escape()
+            .withMessage(ERROR_MSG.NAME),
 
-        body('name')
+          body('phone')
           .isString()
           .escape()
-          .withMessage(ERROR_MSG.NAME),
+            // .isMobilePhone('any')
+            .withMessage(ERROR_MSG.PHONE),
 
-        body('phone')
-        .isString()
-        .escape()
-          // .isMobilePhone('any')
-          .withMessage(ERROR_MSG.PHONE),
-
-        body('address')
-        .isString()
-        .escape()
-        .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
-
-        body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
-
-        body('completed')
-          .optional()
-          .isBoolean()
-          .withMessage(ERROR_MSG.COMPLETED),
-
-        body('products').notEmpty().isArray().withMessage(ERROR_MSG.PRODUCTS),
-
-        body('products.*.fontType')
-          .optional()
+          body('address')
           .isString()
-          .withMessage(ERROR_MSG.PRODUCTS),
-        body('products.*.fontColor')
-          .optional()
-          .isString()
-          .withMessage(ERROR_MSG.PRODUCTS),
-        body('products.*.backgroundColor')
-          .optional()
-          .isString()
-          .withMessage(ERROR_MSG.PRODUCTS),
-        body('products.*.print')
-          .optional()
-          .isObject()
-          .withMessage(ERROR_MSG.PRODUCTS),
-        body('products.*.prints')
-          .optional()
-          .isArray()
-          .withMessage(ERROR_MSG.PRODUCTS),
-      ]),],
-      this.controller.post,
+          .escape()
+          .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
+
+          body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+
+          body('completed')
+            .optional()
+            .isBoolean()
+            .withMessage(ERROR_MSG.COMPLETED),
+
+          body('products').notEmpty().isArray().withMessage(ERROR_MSG.PRODUCTS),
+
+          body('products.*.fontType')
+            .optional()
+            .isString()
+            .withMessage(ERROR_MSG.PRODUCTS),
+          body('products.*.fontColor')
+            .optional()
+            .isString()
+            .withMessage(ERROR_MSG.PRODUCTS),
+          body('products.*.backgroundColor')
+            .optional()
+            .isString()
+            .withMessage(ERROR_MSG.PRODUCTS),
+          body('products.*.print')
+            .optional()
+            .isObject()
+            .withMessage(ERROR_MSG.PRODUCTS),
+        ]),
+      ],
+      this.controller.postGuest,
     );
+
+    this.router.post(
+      '/order/partner',
+      [
+        jwtToken(true),
+        guard.check(['partner:read', 'partner:write']),
+        authErrorHandler,       
+        validate([
+          body('name')
+            .isString()
+            .escape()
+            .withMessage(ERROR_MSG.NAME),
+
+          body('phone')
+          .isString()
+          .escape()
+            // .isMobilePhone('any')
+            .withMessage(ERROR_MSG.PHONE),
+
+          body('address')
+          .isString()
+          .escape()
+          .withMessage(ERROR_MSG.ADDRESS), // should have more constraints
+
+          body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+
+          body('completed')
+            .optional()
+            .isBoolean()
+            .withMessage(ERROR_MSG.COMPLETED),
+
+          body('products').notEmpty().isArray().withMessage(ERROR_MSG.PRODUCTS),
+
+          body('products.*.fontType')
+            .optional()
+            .isString()
+            .withMessage(ERROR_MSG.PRODUCTS),
+          body('products.*.fontColor')
+            .optional()
+            .isString()
+            .withMessage(ERROR_MSG.PRODUCTS),
+          body('products.*.backgroundColor')
+            .optional()
+            .isString()
+            .withMessage(ERROR_MSG.PRODUCTS),
+          body('products.*.prints')
+            .optional()
+            .isArray()
+            .withMessage(ERROR_MSG.PRODUCTS),
+        ]),
+      ],
+      this.controller.postPartner,
+    );
+
     this.router.put(
       '/order/:id',
       validate([

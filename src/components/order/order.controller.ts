@@ -54,9 +54,25 @@ export class OrderController {
     }
   };
 
-  public post = async (req: Request, res: Response, next: NextFunction) => {
+  public postGuest = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const order = await this.orderService.post(req.body);
+      if (!order)
+        throw new AppError(
+          HttpStatusCode.NOT_ACCEPTABLE,
+          ERROR_MSG.NOT_VALID,
+          true,
+        );
+      res.status(HttpStatusCode.CREATED).send(order);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public postPartner = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const decoded = decodeToken(req.headers.authorization!.slice(7)) as JwtPayload;
+      const order = await this.orderService.post({...req.body, partner: decoded.id});
       if (!order)
         throw new AppError(
           HttpStatusCode.NOT_ACCEPTABLE,
