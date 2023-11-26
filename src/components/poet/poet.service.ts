@@ -1,5 +1,5 @@
 // Redis
-import redisClient  from '../../redis';
+import redisClient from '../../redis';
 // Models
 import { Poet } from './poet.model';
 import { Poem } from '../poem/poem.model';
@@ -12,21 +12,21 @@ import { createSchema, updateSchema } from './poet.schema';
 // Utils
 import { filterAsync } from '../../utils/asyncFilterAndMap';
 import { logger } from '../../utils/logger';
-export class PoetService {
-  public async getAll(): Promise<PoetType['details'][] | false> {
-    const poets = await Poet.find({}, { name: 1, time_period: 1 });      
+
+export const PoetService = {
+  async getAll(): Promise<PoetType['details'][] | false> {
+    const poets = await Poet.find({}, { name: 1, time_period: 1 });
     if (poets.length === 0) return false;
     return poets;
-  }
+  },
 
-  public async getOneWithLiterature(id: string): Promise<PoetType | false> {
+  async getOneWithLiterature(id: string): Promise<PoetType | false> {
     let poet: PoetType;
     const cached = await redisClient.get(`poet:${id}`);
-    if(cached) {
+    if (cached) {
       poet = JSON.parse(cached);
     } else {
-      const [details, poems, proses, chosenVerses] =
-      await Promise.all([
+      const [details, poems, proses, chosenVerses] = await Promise.all([
         Poet.findById(id, { name: 1, bio: 1, time_period: 1 }),
         Poem.find({ poet: id }, { intro: 1, reviewed: 1 }),
         Prose.find({ poet: id }, { tags: 1, qoute: 1 }),
@@ -38,15 +38,16 @@ export class PoetService {
       // check if Poet exists, not checking for his Poems,... because it'll be an empty Array.
       if (!details) return false;
 
-      poet = {details, poems, proses, chosenVerses};
-      await redisClient.set(`poet:${id}`, JSON.stringify(poet),  { EX: 60*15 })
-      .catch(err => logger.error(err))
+      poet = { details, poems, proses, chosenVerses };
+      await redisClient
+        .set(`poet:${id}`, JSON.stringify(poet), { EX: 60 * 15 })
+        .catch((err) => logger.error(err));
     }
 
     return poet;
-  }
+  },
 
-  public async post(
+  async post(
     poetData: PoetType['details'],
   ): Promise<PoetType['details'] | false> {
     const isValid = await createSchema.isValid(poetData);
@@ -61,27 +62,36 @@ export class PoetService {
     const newPoet = await poet.save();
     if (!newPoet) return false;
     return newPoet;
-  }
+  },
 
-  public async postMany(
+  async postMany(
     poetsData: PoetType['details'][],
-    ): Promise<{newPoets: PoetType['details'][], nonValidPoets: PoetType['details'][]} | false> {
+  ): Promise<
+    | { newPoets: PoetType['details'][]; nonValidPoets: PoetType['details'][] }
+    | false
+  > {
+    const isValid = async (poetData: PoetType['details']) =>
+      await createSchema.isValid(poetData);
+    const isNotValid = async (poetData: PoetType['details']) =>
+      (await createSchema.isValid(poetData)) === false;
 
-      const isValid = async (poetData: PoetType['details']) => await createSchema.isValid(poetData);
-      const isNotValid = async (poetData: PoetType['details']) => await createSchema.isValid(poetData) === false;
-  
-  
-      const validPoets: PoetType['details'][]  =  await filterAsync(poetsData, isValid)
-      const nonValidPoets: PoetType['details'][]  =  await filterAsync(poetsData, isNotValid)
-  
-      const newPoets = await Poet.insertMany(validPoets);
-      if (newPoets.length == 0) return false;
-  
-      const results = {newPoets, nonValidPoets}
-      return results;
-    }
+    const validPoets: PoetType['details'][] = await filterAsync(
+      poetsData,
+      isValid,
+    );
+    const nonValidPoets: PoetType['details'][] = await filterAsync(
+      poetsData,
+      isNotValid,
+    );
 
-  public async update(
+    const newPoets = await Poet.insertMany(validPoets);
+    if (newPoets.length == 0) return false;
+
+    const results = { newPoets, nonValidPoets };
+    return results;
+  },
+
+  async update(
     id: string,
     poetData: PoetType['details'],
   ): Promise<PoetType['details'] | false> {
@@ -92,11 +102,11 @@ export class PoetService {
     const newPoet = await poet.updateOne({ $set: poetData });
     if (!newPoet) return false;
     return newPoet;
-  }
+  },
 
-  public async remove(id: string): Promise<PoetType['details'] | false> {
+  async remove(id: string): Promise<PoetType['details'] | false> {
     const poet = await Poet.findByIdAndRemove(id);
     if (!poet) return false;
     return poet;
-  }
-}
+  },
+};

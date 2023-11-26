@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-// Controller
+// PoetController
 import { PoetController } from './poet.controller';
 // Types
 import { IRoute } from '../../interfaces/route.interface';
@@ -9,81 +9,56 @@ import { ERROR_MSG } from '../../interfaces/poet.interface';
 import { validate } from '../../middlewares/validate.middleware';
 import { setCache } from '../../middlewares/cache.middleware';
 
-export class PoetRoute implements IRoute {
-  public router: Router = Router();
-  private controller: PoetController = new PoetController();
+const router: Router = Router();
 
-  constructor() {
-    this.initializeRoutes();
-  }
+router.get('/poets', setCache, PoetController.index);
+router.get(
+  '/poet/:id',
+  [
+    validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+    setCache,
+  ],
+  PoetController.indexOneWithLiterature,
+);
+router.post('/poets', PoetController.postMany);
+router.post(
+  '/poet',
+  validate([
+    body('name').isString().escape().withMessage(ERROR_MSG.NAME),
 
-  private initializeRoutes() {
-    this.router.get('/poets', setCache, this.controller.index);
-    this.router.get(
-      '/poet/:id',
-      [
-        validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
-        setCache,
-      ],
-      this.controller.indexOneWithLiterature,
-    );
-    this.router.post(
-      '/poets',
-      this.controller.postMany,
-    );
-    this.router.post(
-      '/poet',
-      validate([
-        body('name')
-          .isString()
-          .escape()
-          .withMessage(ERROR_MSG.NAME),
+    body('time_period').isString().escape().withMessage(ERROR_MSG.TIME_PERIOD),
 
-        body('time_period')
-          .isString()
-          .escape()
-          .withMessage(ERROR_MSG.TIME_PERIOD),
+    body('bio').isString().escape().withMessage(ERROR_MSG.BIO),
 
-        body('bio')
-          .isString()
-          .escape()
-          .withMessage(ERROR_MSG.BIO),
+    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+  ]),
+  PoetController.post,
+);
+router.put(
+  '/poet/:id',
+  validate([
+    param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
 
-        body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
-      ]),
-      this.controller.post,
-    );
-    this.router.put(
-      '/poet/:id',
-      validate([
-        param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
+    body('name').optional().isString().escape().withMessage(ERROR_MSG.NAME),
 
-        body('name')
-          .optional()
-          .isString()
-          .escape()
-          .withMessage(ERROR_MSG.NAME),
+    body('time_period')
+      .optional()
+      .isString()
+      .escape()
+      .withMessage(ERROR_MSG.TIME_PERIOD),
 
-        body('time_period')
-          .optional()
-          .isString()
-          .escape()
-          .withMessage(ERROR_MSG.TIME_PERIOD),
+    body('bio').optional().isString().escape().withMessage(ERROR_MSG.BIO),
 
-        body('bio')
-          .optional()
-          .isString()
-          .escape()
-          .withMessage(ERROR_MSG.BIO),
+    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+  ]),
+  PoetController.update,
+);
+router.delete(
+  '/poet/:id',
+  validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+  PoetController.remove,
+);
 
-        body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
-      ]),
-      this.controller.update,
-    );
-    this.router.delete(
-      '/poet/:id',
-      validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
-      this.controller.remove,
-    );
-  }
-}
+export const PoetRoute: IRoute = {
+  router,
+};
