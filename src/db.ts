@@ -7,7 +7,6 @@ import { logger } from './utils/logger';
 const options = {
   // for development
   dbName: DB_NAME,
-  // for E2E tests
   autoIndex: true,
   // minPoolSize: 5, // Maintain up to x socket connections
   // maxPoolSize: 10, // Maintain up to x socket connections
@@ -18,15 +17,16 @@ const options = {
 mongoose.set('strictQuery', true);
 
 // Create the database connection
-mongoose
-  .connect(DB_URL as string, options)
-  .then(() => {
+
+export const connectDB = async() => {
+  try {
+    mongoose.connect(DB_URL as string, options)
     logger.info(`Mongoose connection done`);
-  })
-  .catch((e) => {
+  } catch (error) {
     logger.info('Mongoose connection error');
-    logger.error(e);
-  });
+    logger.error(error);
+  };
+}
 
 // CONNECTION EVENTS
 // When successfully connected
