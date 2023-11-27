@@ -1,5 +1,5 @@
-// Models
-import { Prose } from './prose.model';
+// Repository
+import {ProseDB} from './prose.repository'
 // Types
 import { ProseType } from '../../interfaces/prose.interface';
 // Utils
@@ -9,33 +9,19 @@ import { createSchema, updateSchema } from './prose.schema';
 
 export const ProseService = {
   async getAllWithPoetName(): Promise<ProseType[] | false> {
-    const proses = await Prose.find(
-      {},
-      { poet: 1, tags: 1, qoute: 1, reviewed: 1 },
-    ).populate('poet', 'name');
+    const proses = await ProseDB.getAllWithPoetName()
     if (proses.length === 0) return false;
     return proses;
   },
 
   async getRandomWithPoetName(num: number): Promise<ProseType[] | false> {
-    const proses = await Prose.aggregate([
-      { $sample: { size: num } },
-      {
-        $unset: ['updatedAt', 'createdAt', 'tags', 'poet', 'reviewed', '__v'],
-      },
-    ]);
+    const proses = await ProseDB.getRandomWithPoetName(num)
     if (proses.length === 0) return false;
     return proses;
   },
 
   async getOneWithPoetName(id: string): Promise<ProseType | false> {
-    const prose = await Prose.findById(id, {
-      poet: 1,
-      tags: 1,
-      qoute: 1,
-      reviewed: 1,
-    }).populate('poet', 'name');
-
+    const prose = await ProseDB.getOneWithPoetName(id)
     if (!prose) return false;
     return prose;
   },
@@ -43,15 +29,7 @@ export const ProseService = {
   async post(proseData: ProseType): Promise<ProseType | false> {
     const isValid = await createSchema.isValid(proseData);
     if (!isValid) return false;
-
-    const prose = new Prose({
-      poet: proseData.poet,
-      tags: proseData.tags,
-      qoute: proseData.qoute,
-      reviewed: proseData.reviewed,
-    });
-
-    const newProse = await prose.save();
+    const newProse = await ProseDB.post(proseData);
     if (!newProse) return false;
     return newProse;
   },
@@ -70,7 +48,7 @@ export const ProseService = {
       isNotValid,
     );
 
-    const newProses = await Prose.insertMany(validProses);
+    const newProses = await ProseDB.postMany(validProses);
     if (newProses.length == 0) return false;
 
     const results = { newProses, inValidProses };
@@ -80,15 +58,13 @@ export const ProseService = {
   async update(id: string, proseData: ProseType): Promise<ProseType | false> {
     const isValid = await updateSchema.isValid(proseData);
     if (!isValid) return false;
-    const prose = await Prose.findById(id);
-    if (!prose) return false;
-    const newProse = await prose.updateOne({ $set: proseData });
+    const newProse = await ProseDB.update(id, proseData);
     if (!newProse) return false;
     return newProse;
   },
 
   async remove(id: string) {
-    const prose = await Prose.findByIdAndRemove(id);
+    const prose = await ProseDB.remove(id);
     if (!prose) return false;
     return prose;
   },
