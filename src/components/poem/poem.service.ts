@@ -1,30 +1,21 @@
-// Redis
-import redisClient from '../../redis';
-// Models
-import { Poem } from './poem.model';
+// Repository
+import {PoemDB, PoemRedis} from './poem.repository'
 // Types
 import { PoemType } from '../../interfaces/poem.interface';
 // Schema
 import { createSchema, updateSchema } from './poem.schema';
 // Utils
 import { filterAsync } from '../../utils/asyncFilterAndMap';
-import { logger } from '../../utils/logger';
+
 export const PoemService = {
   async getAllWithPoetName(): Promise<PoemType[] | false> {
-    const poems = await Poem.find(
-      {},
-      { intro: 1, poet: 1, verses: 1, reviewed: 1 },
-    ).populate('poet', 'name');
-
+    const poems = await PoemDB.getAllWithPoetName()
     if (poems.length === 0) return false;
     return poems;
   },
 
   async getAllIntrosWithPoetName(): Promise<PoemType[] | false> {
-    const poems = await Poem.find(
-      {},
-      { intro: 1, poet: 1, reviewed: 1 },
-    ).populate('poet', 'name');
+    const poems = await PoemDB.getAllIntrosWithPoetName()
     if (poems.length === 0) return false;
     return poems;
   },
@@ -32,37 +23,22 @@ export const PoemService = {
   async getOneWithPoet(id: string): Promise<PoemType | false> {
     let poem: PoemType | null;
 
-    const cached = await redisClient.get(`poem:${id}`);
+    const cached = await PoemRedis.get(id);
     if (cached) {
       poem = JSON.parse(cached);
     } else {
-      poem = await Poem.findById(id, {
-        intro: 1,
-        poet: 1,
-        verses: 1,
-        reviewed: 1,
-      }).populate('poet', ['name', 'bio', 'time_period']);
-
-      await redisClient
-        .set(`poem:${id}`, JSON.stringify(poem), { EX: 60 * 15 })
-        .catch((err) => logger.error(err));
+      poem = await PoemDB.getOneWithPoet(id);
     }
 
     if (!poem) return false;
+    await PoemRedis.set(id, poem)
     return poem;
   },
 
   async post(poemData: PoemType): Promise<PoemType | false> {
     const isValid = await createSchema.isValid(poemData);
     if (!isValid) return false;
-
-    const poem = new Poem({
-      intro: poemData.intro,
-      poet: poemData.poet,
-      verses: poemData.verses,
-      reviewed: poemData.reviewed,
-    });
-    const newPoem = await poem.save();
+    const newPoem = await PoemDB.post(poemData)
     if (!newPoem) return false;
     return newPoem;
   },
@@ -78,7 +54,7 @@ export const PoemService = {
     const validPoems: PoemType[] = await filterAsync(poemsData, isValid);
     const inValidPoems: PoemType[] = await filterAsync(poemsData, isNotValid);
 
-    const newPoems = await Poem.insertMany(validPoems);
+    const newPoems = await PoemDB.postMany(validPoems);
     if (newPoems.length == 0) return false;
 
     const results = { newPoems, inValidPoems };
@@ -88,16 +64,13 @@ export const PoemService = {
   async update(id: string, poemData: PoemType): Promise<PoemType | false> {
     const isValid = await updateSchema.isValid(poemData);
     if (!isValid) return false;
-
-    const poem = await Poem.findById(id);
-    if (!poem) return false;
-    const newPoem = await poem.updateOne({ $set: poemData });
+    const newPoem = await PoemDB.update(id, poemData)
     if (!newPoem) return false;
     return newPoem;
   },
 
   async remove(id: string): Promise<PoemType | false> {
-    const poem = await Poem.findByIdAndRemove(id);
+    const poem = await PoemDB.remove(id)
     if (!poem) return false;
     return poem;
   },
