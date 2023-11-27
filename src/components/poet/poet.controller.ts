@@ -10,16 +10,12 @@ import HttpStatusCode from '../../utils/httpStatusCode';
 export const PoetController = {
   index: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poets = await PoetService.getAll();
-
-      if (!poets) {
-        throw new AppError(
-          HttpStatusCode.NOT_FOUND,
-          ERROR_MSG.NOT_AVAILABLE,
-          true,
-        );
+      const service = await PoetService.getAll();
+      const { status, poets, errMsg } = responseInfo.index(service);
+      if (errMsg) {
+        throw new AppError(status, errMsg, true);
       }
-      res.status(HttpStatusCode.OK).send(poets);
+      res.status(status).send(poets);
     } catch (errors) {
       next(errors);
     }
@@ -31,10 +27,13 @@ export const PoetController = {
     next: NextFunction,
   ) => {
     try {
-      const poet = await PoetService.getOneWithLiterature(req.params.id);
-      if (!poet)
-        throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      return res.status(HttpStatusCode.OK).send(poet);
+      const service = await PoetService.getOneWithLiterature(req.params.id);
+      const { status, poet, errMsg } =
+        responseInfo.indexOneWithLiterature(service);
+      if (errMsg) {
+        throw new AppError(status, errMsg, true);
+      }
+      res.status(status).send(poet);
     } catch (err) {
       next(err);
     }
@@ -42,14 +41,11 @@ export const PoetController = {
 
   post: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poet = await PoetService.post(req.body as PoetType['details']);
-      if (!poet)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.CREATED).send(poet);
+      const service = await PoetService.post(req.body);
+      const { status, poet, errMsg } = responseInfo.post(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+
+      res.status(status).send(poet);
     } catch (errors) {
       next(errors);
     }
@@ -57,31 +53,25 @@ export const PoetController = {
 
   postMany: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poets = await PoetService.postMany(
-        req.body as PoetType['details'][],
-      );
-      if (!poets)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.CREATED).send(poets);
-    } catch (error) {
-      next(error);
+      const service = await PoetService.postMany(req.body);
+      const { status, poets, errMsg } = responseInfo.postMany(service);
+      if (errMsg) {
+        throw new AppError(status, errMsg, true);
+      }
+      res.status(status).send(poets);
+    } catch (errors) {
+      next(errors);
     }
   },
 
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poet = await PoetService.update(req.params.id, req.body);
-      if (!poet)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.ACCEPTED).send(poet);
+      const service = await PoetService.update(req.params.id, req.body);
+      const { status, errMsg } = responseInfo.update(service);
+      if (errMsg) {
+        throw new AppError(status, errMsg, true);
+      }
+      res.sendStatus(status);
     } catch (errors) {
       next(errors);
     }
@@ -89,12 +79,74 @@ export const PoetController = {
 
   remove: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poet = await PoetService.remove(req.params.id);
-      if (!poet)
-        throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      res.status(HttpStatusCode.ACCEPTED).send('Deleted Successfully');
+      const service = await PoetService.remove(req.params.id);
+      const { status, errMsg } = responseInfo.remove(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.sendStatus(status);
     } catch (errors) {
       next(errors);
     }
+  },
+};
+
+export const responseInfo = {
+  index: (
+    poets: PoetType['details'][] | false,
+  ): { status: number; poets?: PoetType['details'][]; errMsg?: string } => {
+    if (!poets) {
+      return {
+        status: HttpStatusCode.NOT_FOUND,
+        errMsg: ERROR_MSG.NOT_AVAILABLE,
+      };
+    }
+    return { status: HttpStatusCode.OK, poets };
+  },
+  indexOneWithLiterature: (
+    poet: PoetType | false,
+  ): { status: number; poet?: PoetType; errMsg?: string } => {
+    if (!poet) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.OK, poet };
+  },
+  post: (
+    poet: PoetType['details'] | false,
+  ): { status: number; poet?: PoetType['details']; errMsg?: string } => {
+    if (!poet) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.CREATED, poet };
+  },
+  postMany: (
+    poets: { newPoets: PoetType['details'][]; inValidPoets: PoetType['details'][] } | false,
+  ): {
+    status: number;
+    poets?: { newPoets: PoetType['details'][]; inValidPoets: PoetType['details'][] };
+    errMsg?: string;
+  } => {
+    if (!poets) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.CREATED, poets };
+  },
+  update: (poet: PoetType['details'] | false): { status: number; errMsg?: string } => {
+    if (!poet) 
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    return { status: HttpStatusCode.ACCEPTED };
+  },
+  remove: (poet: PoetType['details'] | false): { status: number; errMsg?: string } => {
+    if (!poet) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.ACCEPTED };
   },
 };
