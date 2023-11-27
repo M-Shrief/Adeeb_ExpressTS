@@ -17,7 +17,7 @@ const app = new App([
   PoetRoute,
   PoemRoute,
   new ChosenVerseRoute(),
-  new ProseRoute(),
+  ProseRoute,
   new PartnerRoute(),
   new OrderRoute(),
 ]);

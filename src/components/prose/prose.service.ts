@@ -6,19 +6,18 @@ import { ProseType } from '../../interfaces/prose.interface';
 import { filterAsync } from '../../utils/asyncFilterAndMap';
 // Schema
 import { createSchema, updateSchema } from './prose.schema';
-export class ProseService {
-  public async getAllWithPoetName(): Promise<ProseType[] | false> {
+
+export const ProseService = {
+  async getAllWithPoetName(): Promise<ProseType[] | false> {
     const proses = await Prose.find(
       {},
       { poet: 1, tags: 1, qoute: 1, reviewed: 1 },
     ).populate('poet', 'name');
     if (proses.length === 0) return false;
     return proses;
-  }
+  },
 
-  public async getRandomWithPoetName(
-    num: number,
-  ): Promise<ProseType[] | false> {
+  async getRandomWithPoetName(num: number): Promise<ProseType[] | false> {
     const proses = await Prose.aggregate([
       { $sample: { size: num } },
       {
@@ -27,9 +26,9 @@ export class ProseService {
     ]);
     if (proses.length === 0) return false;
     return proses;
-  }
+  },
 
-  public async getOneWithPoetName(id: string): Promise<ProseType | false> {
+  async getOneWithPoetName(id: string): Promise<ProseType | false> {
     const prose = await Prose.findById(id, {
       poet: 1,
       tags: 1,
@@ -39,9 +38,9 @@ export class ProseService {
 
     if (!prose) return false;
     return prose;
-  }
+  },
 
-  public async post(proseData: ProseType): Promise<ProseType | false> {
+  async post(proseData: ProseType): Promise<ProseType | false> {
     const isValid = await createSchema.isValid(proseData);
     if (!isValid) return false;
 
@@ -55,30 +54,30 @@ export class ProseService {
     const newProse = await prose.save();
     if (!newProse) return false;
     return newProse;
-  }
+  },
 
-  public async postMany(
+  async postMany(
     prosesData: ProseType[],
-  ): Promise<{newProses: ProseType[], inValidProses: ProseType[]} | false> {
+  ): Promise<{ newProses: ProseType[]; inValidProses: ProseType[] } | false> {
+    const isValid = async (proseData: ProseType) =>
+      await createSchema.isValid(proseData);
+    const isNotValid = async (proseData: ProseType) =>
+      (await createSchema.isValid(proseData)) === false;
 
-    const isValid = async (proseData: ProseType) => await createSchema.isValid(proseData);
-    const isNotValid = async (proseData: ProseType) => await createSchema.isValid(proseData) === false;
-
-
-    const validProses: ProseType[]  =  await filterAsync(prosesData, isValid)
-    const inValidProses: ProseType[]  =  await filterAsync(prosesData, isNotValid)
+    const validProses: ProseType[] = await filterAsync(prosesData, isValid);
+    const inValidProses: ProseType[] = await filterAsync(
+      prosesData,
+      isNotValid,
+    );
 
     const newProses = await Prose.insertMany(validProses);
     if (newProses.length == 0) return false;
 
-    const results = {newProses, inValidProses}
+    const results = { newProses, inValidProses };
     return results;
-  }
+  },
 
-  public async update(
-    id: string,
-    proseData: ProseType,
-  ): Promise<ProseType | false> {
+  async update(id: string, proseData: ProseType): Promise<ProseType | false> {
     const isValid = await updateSchema.isValid(proseData);
     if (!isValid) return false;
     const prose = await Prose.findById(id);
@@ -86,11 +85,11 @@ export class ProseService {
     const newProse = await prose.updateOne({ $set: proseData });
     if (!newProse) return false;
     return newProse;
-  }
+  },
 
-  public async remove(id: string) {
+  async remove(id: string) {
     const prose = await Prose.findByIdAndRemove(id);
     if (!prose) return false;
     return prose;
-  }
-}
+  },
+};
