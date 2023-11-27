@@ -12,7 +12,6 @@ export interface PoetType {
     reviewed: boolean;
   };
   poems: PoemType[];
-  poetry?: PoetryType;
   chosenVerses: ChosenVerseType[];
   proses: ProseType[];
 }
