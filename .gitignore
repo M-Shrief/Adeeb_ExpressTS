@@ -10,6 +10,8 @@ coverage
 
 ecosystem.config.js
 
+*.tsbuildinfo
+
 can_use.md
 
 *.pem

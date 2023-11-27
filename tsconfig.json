@@ -6,6 +6,13 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "outDir": "./dist",
-    "rootDir": "src"
-  }
+    "rootDir": "src",
+    "sourceMap": true,
+    // delete dist, tsconfig.tsbuildinfo to force re-building all files./s
+    "incremental": true,
+    "skipLibCheck": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src"],
+  "exclude": ["src/tests", "src/components/*/*.*.spec.ts", "./*.ts"]
 }
