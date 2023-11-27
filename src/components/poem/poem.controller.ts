@@ -14,15 +14,10 @@ export const PoemController = {
     next: NextFunction,
   ) => {
     try {
-      const poems = await PoemService.getAllWithPoetName();
-
-      if (!poems)
-        throw new AppError(
-          HttpStatusCode.NOT_FOUND,
-          ERROR_MSG.NOT_AVAILABLE,
-          true,
-        );
-      res.status(HttpStatusCode.OK).send(poems);
+      const service = await PoemService.getAllWithPoetName();
+      const { status, poems, errMsg } = responseInfo.indexWithPoetName(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(poems);
     } catch (error) {
       next(error);
     }
@@ -34,14 +29,10 @@ export const PoemController = {
     next: NextFunction,
   ) => {
     try {
-      const poems = await PoemService.getAllIntrosWithPoetName();
-
-      if (!poems)
-        throw new AppError(
-          HttpStatusCode.NOT_FOUND,
-          ERROR_MSG.NOT_AVAILABLE,
-          true,
-        );
+      const service = await PoemService.getAllIntrosWithPoetName();
+      const { status, poems, errMsg } =
+        responseInfo.indexIntrosWithPoetName(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
       res.status(HttpStatusCode.OK).send(poems);
     } catch (error) {
       next(error);
@@ -50,10 +41,10 @@ export const PoemController = {
 
   indexOneWithPoet: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poem = await PoemService.getOneWithPoet(req.params.id);
-      if (!poem)
-        throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      res.status(HttpStatusCode.OK).send(poem);
+      const service = await PoemService.getOneWithPoet(req.params.id);
+      const { status, poem, errMsg } = responseInfo.indexOneWithPoet(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(poem);
     } catch (error) {
       next(error);
     }
@@ -61,14 +52,10 @@ export const PoemController = {
 
   post: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poem = await PoemService.post(req.body as PoemType);
-      if (!poem)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.CREATED).send(poem);
+      const service = await PoemService.post(req.body);
+      const { status, poem, errMsg } = responseInfo.post(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(poem);
     } catch (error) {
       next(error);
     }
@@ -76,14 +63,10 @@ export const PoemController = {
 
   postMany: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poems = await PoemService.postMany(req.body as PoemType[]);
-      if (!poems)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.CREATED).send(poems);
+      const service = await PoemService.postMany(req.body);
+      const { status, poems, errMsg } = responseInfo.postMany(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(poems);
     } catch (error) {
       next(error);
     }
@@ -91,17 +74,10 @@ export const PoemController = {
 
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poem = await PoemService.update(
-        req.params.id,
-        req.body as PoemType,
-      );
-      if (!poem)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.ACCEPTED).send(poem);
+      const service = await PoemService.update(req.params.id, req.body);
+      const { status, errMsg } = responseInfo.update(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.sendStatus(status);
     } catch (error) {
       next(error);
     }
@@ -109,12 +85,86 @@ export const PoemController = {
 
   remove: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const poem = await PoemService.remove(req.params.id);
-      if (!poem)
-        throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      res.status(HttpStatusCode.ACCEPTED).send(poem);
+      const service = await PoemService.remove(req.params.id);
+      const { status, errMsg } = responseInfo.remove(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.sendStatus(status);
     } catch (error) {
       next(error);
     }
+  },
+};
+
+export const responseInfo = {
+  indexWithPoetName: (
+    poems: PoemType[] | false,
+  ): { status: number; poems?: PoemType[]; errMsg?: string } => {
+    if (!poems) {
+      return {
+        status: HttpStatusCode.NOT_FOUND,
+        errMsg: ERROR_MSG.NOT_AVAILABLE,
+      };
+    }
+    return { status: HttpStatusCode.OK, poems };
+  },
+  indexIntrosWithPoetName: (
+    poems: PoemType[] | false,
+  ): { status: number; poems?: PoemType[]; errMsg?: string } => {
+    if (!poems) {
+      return {
+        status: HttpStatusCode.NOT_FOUND,
+        errMsg: ERROR_MSG.NOT_AVAILABLE,
+      };
+    }
+    return { status: HttpStatusCode.OK, poems };
+  },
+  indexOneWithPoet: (
+    poem: PoemType | false,
+  ): { status: number; poem?: PoemType; errMsg?: string } => {
+    if (!poem) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.OK, poem };
+  },
+  post: (
+    poem: PoemType | false,
+  ): { status: number; poem?: PoemType; errMsg?: string } => {
+    if (!poem) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.CREATED, poem };
+  },
+  postMany: (
+    poems: { newPoems: PoemType[]; inValidPoems: PoemType[] } | false,
+  ): {
+    status: number;
+    poems?: { newPoems: PoemType[]; inValidPoems: PoemType[] };
+    errMsg?: string;
+  } => {
+    if (!poems) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.CREATED, poems };
+  },
+  update: (poem: PoemType | false): { status: number; errMsg?: string } => {
+    if (!poem) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.ACCEPTED };
+  },
+  remove: (poem: PoemType | false): { status: number; errMsg?: string } => {
+    if (!poem) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.ACCEPTED };
   },
 };
