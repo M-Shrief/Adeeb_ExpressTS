@@ -40,7 +40,7 @@ export const PoetService = {
   async postMany(
     poetsData: PoetType['details'][],
   ): Promise<
-    | { newPoets: PoetType['details'][]; nonValidPoets: PoetType['details'][] }
+    | { newPoets: PoetType['details'][]; inValidPoets: PoetType['details'][] }
     | false
   > {
     const isValid = async (poetData: PoetType['details']) =>
@@ -52,7 +52,7 @@ export const PoetService = {
       poetsData,
       isValid,
     );
-    const nonValidPoets: PoetType['details'][] = await filterAsync(
+    const inValidPoets: PoetType['details'][] = await filterAsync(
       poetsData,
       isNotValid,
     );
@@ -60,7 +60,7 @@ export const PoetService = {
     const newPoets = await PoetDB.postMany(validPoets);
     if (newPoets.length == 0) return false;
 
-    const results = { newPoets, nonValidPoets };
+    const results = { newPoets, inValidPoets };
     return results;
   },
 

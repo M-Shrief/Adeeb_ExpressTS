@@ -59,19 +59,19 @@ export class ProseService {
 
   public async postMany(
     prosesData: ProseType[],
-  ): Promise<{newProses: ProseType[], nonValidProses: ProseType[]} | false> {
+  ): Promise<{newProses: ProseType[], inValidProses: ProseType[]} | false> {
 
     const isValid = async (proseData: ProseType) => await createSchema.isValid(proseData);
     const isNotValid = async (proseData: ProseType) => await createSchema.isValid(proseData) === false;
 
 
     const validProses: ProseType[]  =  await filterAsync(prosesData, isValid)
-    const nonValidProses: ProseType[]  =  await filterAsync(prosesData, isNotValid)
+    const inValidProses: ProseType[]  =  await filterAsync(prosesData, isNotValid)
 
     const newProses = await Prose.insertMany(validProses);
     if (newProses.length == 0) return false;
 
-    const results = {newProses, nonValidProses}
+    const results = {newProses, inValidProses}
     return results;
   }
 

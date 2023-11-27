@@ -69,19 +69,19 @@ export class PoemService {
 
   public async postMany(
     poemsData: PoemType[],
-  ): Promise<{newPoems: PoemType[], nonValidPoems: PoemType[]} | false> {
+  ): Promise<{newPoems: PoemType[], inValidPoems: PoemType[]} | false> {
 
     const isValid = async (poemData: PoemType) => await createSchema.isValid(poemData);
     const isNotValid = async (poemData: PoemType) => await createSchema.isValid(poemData) === false;
 
 
     const validPoems: PoemType[]  =  await filterAsync(poemsData, isValid)
-    const nonValidPoems: PoemType[]  =  await filterAsync(poemsData, isNotValid)
+    const inValidPoems: PoemType[]  =  await filterAsync(poemsData, isNotValid)
 
     const newPoems = await Poem.insertMany(validPoems);
     if (newPoems.length == 0) return false;
 
-    const results = {newPoems, nonValidPoems}
+    const results = {newPoems, inValidPoems}
     return results;
   }
 
