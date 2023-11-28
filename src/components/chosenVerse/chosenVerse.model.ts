@@ -19,7 +19,7 @@ const ChosenVerseSchema = new Schema(
     tags: {
       type: String,
       required: true,
-      length: {minlength: 4, maxlength: 50}
+      length: { minlength: 4, maxlength: 50 },
     },
     verses: {
       type: [] as VerseType[],

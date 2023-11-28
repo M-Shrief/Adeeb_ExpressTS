@@ -6,19 +6,18 @@ import { ChosenVerseType } from '../../interfaces/chosenVerse.interface';
 import { filterAsync } from '../../utils/asyncFilterAndMap';
 //Schema
 import { createSchema, updateSchema } from './chosenVerse.schema';
-export class ChosenVerseService {
-  public async getAllWithPoetName(): Promise<ChosenVerseType[] | false> {
+
+export const ChosenVerseService = {
+  async getAllWithPoetName(): Promise<ChosenVerseType[] | false> {
     const chosenVerses = await ChosenVerse.find(
       {},
       { reviewed: 1, tags: 1, verses: 1, poet: 1, poem: 1 },
     ).populate('poet', 'name');
     if (chosenVerses.length === 0) return false;
     return chosenVerses;
-  }
+  },
 
-  public async getRandomWithPoetName(
-    num: number,
-  ): Promise<ChosenVerseType[] | false> {
+  async getRandomWithPoetName(num: number): Promise<ChosenVerseType[] | false> {
     const chosenVerses = await ChosenVerse.aggregate([
       { $sample: { size: num } },
       {
@@ -36,11 +35,9 @@ export class ChosenVerseService {
 
     if (chosenVerses.length === 0) return false;
     return chosenVerses;
-  }
+  },
 
-  public async getOneWithPoetName(
-    id: string,
-  ): Promise<ChosenVerseType | false> {
+  async getOneWithPoetName(id: string): Promise<ChosenVerseType | false> {
     const chosenVerse = await ChosenVerse.findById(id, {
       reviewed: 1,
       tags: 1,
@@ -50,9 +47,9 @@ export class ChosenVerseService {
     }).populate('poet', 'name');
     if (!chosenVerse) return false;
     return chosenVerse;
-  }
+  },
 
-  public async post(
+  async post(
     chosenVerseData: ChosenVerseType,
   ): Promise<ChosenVerseType | false> {
     const isValid = await createSchema.isValid(chosenVerseData);
@@ -68,27 +65,39 @@ export class ChosenVerseService {
     const newChosenVerse = await chosenVerse.save();
     if (!newChosenVerse) return false;
     return newChosenVerse;
-  }
+  },
 
-  public async postMany(
+  async postMany(
     chosenVersesData: ChosenVerseType[],
-  ): Promise<{newChosenVerses: ChosenVerseType[], inValidChosenVerses: ChosenVerseType[]} | false> {
+  ): Promise<
+    | {
+        newChosenVerses: ChosenVerseType[];
+        inValidChosenVerses: ChosenVerseType[];
+      }
+    | false
+  > {
+    const isValid = async (chosenVerseData: ChosenVerseType) =>
+      await createSchema.isValid(chosenVerseData);
+    const isNotValid = async (chosenVerseData: ChosenVerseType) =>
+      (await createSchema.isValid(chosenVerseData)) === false;
 
-    const isValid = async (chosenVerseData: ChosenVerseType) => await createSchema.isValid(chosenVerseData);
-    const isNotValid = async (chosenVerseData: ChosenVerseType) => await createSchema.isValid(chosenVerseData) === false;
-
-
-    const validChosenVerses: ChosenVerseType[]  =  await filterAsync(chosenVersesData, isValid)
-    const inValidChosenVerses: ChosenVerseType[]  =  await filterAsync(chosenVersesData, isNotValid)
+    const validChosenVerses: ChosenVerseType[] = await filterAsync(
+      chosenVersesData,
+      isValid,
+    );
+    const inValidChosenVerses: ChosenVerseType[] = await filterAsync(
+      chosenVersesData,
+      isNotValid,
+    );
 
     const newChosenVerses = await ChosenVerse.insertMany(validChosenVerses);
     if (newChosenVerses.length == 0) return false;
 
-    const results = {newChosenVerses, inValidChosenVerses}
+    const results = { newChosenVerses, inValidChosenVerses };
     return results;
-  }
+  },
 
-  public async update(
+  async update(
     id: string,
     chosenVerseData: ChosenVerseType,
   ): Promise<ChosenVerseType | false> {
@@ -101,11 +110,11 @@ export class ChosenVerseService {
     });
     if (!newChosenVerse) return false;
     return newChosenVerse;
-  }
+  },
 
-  public async remove(id: string): Promise<ChosenVerseType | false> {
+  async remove(id: string): Promise<ChosenVerseType | false> {
     const poet = await ChosenVerse.findByIdAndRemove(id);
     if (!poet) return false;
     return poet;
-  }
-}
+  },
+};

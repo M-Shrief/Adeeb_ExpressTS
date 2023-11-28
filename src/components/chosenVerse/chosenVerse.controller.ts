@@ -10,16 +10,14 @@ import {
 import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
-export class ChosenVerseController {
-  private chosenVerseService = new ChosenVerseService();
-
-  public indexWithPoetName = async (
+export const ChosenVerseController = {
+  indexWithPoetName: async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const chosenVerses = await this.chosenVerseService.getAllWithPoetName();
+      const chosenVerses = await ChosenVerseService.getAllWithPoetName();
       if (!chosenVerses)
         throw new AppError(
           HttpStatusCode.NOT_FOUND,
@@ -30,15 +28,15 @@ export class ChosenVerseController {
     } catch (error) {
       next(error);
     }
-  };
+  },
 
-  public indexRandomWithPoetName = async (
+  indexRandomWithPoetName: async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const chosenVerses = await this.chosenVerseService.getRandomWithPoetName(
+      const chosenVerses = await ChosenVerseService.getRandomWithPoetName(
         Number(req.query.num),
       );
       if (!chosenVerses)
@@ -51,15 +49,15 @@ export class ChosenVerseController {
     } catch (error) {
       next(error);
     }
-  };
+  },
 
-  public indexOneWithPoetName = async (
+  indexOneWithPoetName: async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const chosenVerse = await this.chosenVerseService.getOneWithPoetName(
+      const chosenVerse = await ChosenVerseService.getOneWithPoetName(
         req.params.id,
       );
       if (!chosenVerse)
@@ -68,11 +66,11 @@ export class ChosenVerseController {
     } catch (error) {
       next(error);
     }
-  };
+  },
 
-  public post = async (req: Request, res: Response, next: NextFunction) => {
+  post: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerse = await this.chosenVerseService.post(
+      const chosenVerse = await ChosenVerseService.post(
         req.body as ChosenVerseType,
       );
       if (!chosenVerse)
@@ -85,11 +83,11 @@ export class ChosenVerseController {
     } catch (error) {
       next(error);
     }
-  };
+  },
 
-  public postMany = async (req: Request, res: Response, next: NextFunction) => {
+  postMany: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerses = await this.chosenVerseService.postMany(
+      const chosenVerses = await ChosenVerseService.postMany(
         req.body as ChosenVerseType[],
       );
       if (!chosenVerses)
@@ -102,11 +100,11 @@ export class ChosenVerseController {
     } catch (error) {
       next(error);
     }
-  };
+  },
 
-  public update = async (req: Request, res: Response, next: NextFunction) => {
+  update: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerse = await this.chosenVerseService.update(
+      const chosenVerse = await ChosenVerseService.update(
         req.params.id,
         req.body,
       );
@@ -120,11 +118,11 @@ export class ChosenVerseController {
     } catch (error) {
       next(error);
     }
-  };
+  },
 
-  public remove = async (req: Request, res: Response, next: NextFunction) => {
+  remove: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerse = await this.chosenVerseService.remove(req.params.id);
+      const chosenVerse = await ChosenVerseService.remove(req.params.id);
       if (!chosenVerse)
         throw new AppError(
           HttpStatusCode.NOT_FOUND,
@@ -135,5 +133,5 @@ export class ChosenVerseController {
     } catch (errors) {
       next(errors);
     }
-  };
-}
+  },
+};

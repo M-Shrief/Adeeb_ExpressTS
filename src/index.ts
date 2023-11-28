@@ -16,7 +16,7 @@ connectRedis()
 const app = new App([
   PoetRoute,
   PoemRoute,
-  new ChosenVerseRoute(),
+  ChosenVerseRoute,
   ProseRoute,
   new PartnerRoute(),
   new OrderRoute(),
