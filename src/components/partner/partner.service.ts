@@ -1,5 +1,5 @@
 // Repository
-import {PartnerDB} from './partner.repository'
+import { PartnerDB } from './partner.repository';
 // Types
 import { PartnerType } from '../../interfaces/partner.interface';
 // Utils
@@ -20,7 +20,11 @@ export const PartnerService = {
     if (!isValid) return false;
     const password = await hashPassword(partnerData.password);
 
-    const newPartner = await PartnerDB.signup({name: partnerData.name, phone: partnerData.phone, password} as PartnerType)
+    const newPartner = await PartnerDB.signup({
+      name: partnerData.name,
+      phone: partnerData.phone,
+      password,
+    } as PartnerType);
     if (!newPartner) return false;
     return newPartner;
   },
