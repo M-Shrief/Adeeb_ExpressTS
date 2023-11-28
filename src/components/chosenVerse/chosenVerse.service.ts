@@ -1,6 +1,6 @@
-// Models
-import { ChosenVerse } from './chosenVerse.model';
-// Types
+// Repository
+import {ChosenVerseDB} from './chosenVerse.repository'
+// Type
 import { ChosenVerseType } from '../../interfaces/chosenVerse.interface';
 // Utils
 import { filterAsync } from '../../utils/asyncFilterAndMap';
@@ -9,42 +9,20 @@ import { createSchema, updateSchema } from './chosenVerse.schema';
 
 export const ChosenVerseService = {
   async getAllWithPoetName(): Promise<ChosenVerseType[] | false> {
-    const chosenVerses = await ChosenVerse.find(
-      {},
-      { reviewed: 1, tags: 1, verses: 1, poet: 1, poem: 1 },
-    ).populate('poet', 'name');
+    const chosenVerses = await ChosenVerseDB.getAllWithPoetName()
     if (chosenVerses.length === 0) return false;
     return chosenVerses;
   },
 
   async getRandomWithPoetName(num: number): Promise<ChosenVerseType[] | false> {
-    const chosenVerses = await ChosenVerse.aggregate([
-      { $sample: { size: num } },
-      {
-        $unset: [
-          'updatedAt',
-          'createdAt',
-          'tags',
-          'poet',
-          'poem',
-          'reviewed',
-          '__v',
-        ],
-      },
-    ]);
+    const chosenVerses = await ChosenVerseDB.getRandomWithPoetName(num)
 
     if (chosenVerses.length === 0) return false;
     return chosenVerses;
   },
 
   async getOneWithPoetName(id: string): Promise<ChosenVerseType | false> {
-    const chosenVerse = await ChosenVerse.findById(id, {
-      reviewed: 1,
-      tags: 1,
-      verses: 1,
-      poet: 1,
-      poem: 1,
-    }).populate('poet', 'name');
+    const chosenVerse = await ChosenVerseDB.getOneWithPoetName(id);
     if (!chosenVerse) return false;
     return chosenVerse;
   },
@@ -54,15 +32,7 @@ export const ChosenVerseService = {
   ): Promise<ChosenVerseType | false> {
     const isValid = await createSchema.isValid(chosenVerseData);
     if (!isValid) return false;
-
-    const chosenVerse = new ChosenVerse({
-      poet: chosenVerseData.poet,
-      poem: chosenVerseData.poem,
-      tags: chosenVerseData.tags,
-      verses: chosenVerseData.verses,
-      reviewed: chosenVerseData.reviewed,
-    });
-    const newChosenVerse = await chosenVerse.save();
+    const newChosenVerse = await ChosenVerseDB.post(chosenVerseData);
     if (!newChosenVerse) return false;
     return newChosenVerse;
   },
@@ -90,7 +60,7 @@ export const ChosenVerseService = {
       isNotValid,
     );
 
-    const newChosenVerses = await ChosenVerse.insertMany(validChosenVerses);
+    const newChosenVerses = await ChosenVerseDB.postMany(validChosenVerses);
     if (newChosenVerses.length == 0) return false;
 
     const results = { newChosenVerses, inValidChosenVerses };
@@ -103,17 +73,13 @@ export const ChosenVerseService = {
   ): Promise<ChosenVerseType | false> {
     const isValid = await updateSchema.isValid(chosenVerseData);
     if (!isValid) return false;
-    const chosenVerse = await ChosenVerse.findById(id);
-    if (!chosenVerse) return false;
-    const newChosenVerse = await chosenVerse.updateOne({
-      $set: chosenVerseData,
-    });
+    const newChosenVerse = await ChosenVerseDB.update(id, chosenVerseData);
     if (!newChosenVerse) return false;
     return newChosenVerse;
   },
 
   async remove(id: string): Promise<ChosenVerseType | false> {
-    const poet = await ChosenVerse.findByIdAndRemove(id);
+    const poet = await ChosenVerseDB.remove(id);
     if (!poet) return false;
     return poet;
   },
