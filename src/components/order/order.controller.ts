@@ -131,4 +131,4 @@ export const responseInfo = {
     }
     return { status: HttpStatusCode.ACCEPTED };
   },
-}
+};
