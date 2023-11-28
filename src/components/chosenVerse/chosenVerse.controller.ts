@@ -11,7 +11,6 @@ import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 export const ChosenVerseController = {
-
   indexWithPoetName: async (
     req: Request,
     res: Response,
@@ -19,7 +18,8 @@ export const ChosenVerseController = {
   ) => {
     try {
       const service = await ChosenVerseService.getAllWithPoetName();
-      const {status, chosenVerses, errMsg} = responseInfo.indexWithPoetName(service)
+      const { status, chosenVerses, errMsg } =
+        responseInfo.indexWithPoetName(service);
       if (errMsg) throw new AppError(status, errMsg, true);
       res.status(status).send(chosenVerses);
     } catch (error) {
@@ -36,7 +36,8 @@ export const ChosenVerseController = {
       const service = await ChosenVerseService.getRandomWithPoetName(
         Number(req.query.num),
       );
-      const {status, chosenVerses, errMsg} = responseInfo.indexRandomWithPoetName(service)
+      const { status, chosenVerses, errMsg } =
+        responseInfo.indexRandomWithPoetName(service);
       if (errMsg) throw new AppError(status, errMsg, true);
       res.status(status).send(chosenVerses);
     } catch (error) {
@@ -53,7 +54,8 @@ export const ChosenVerseController = {
       const service = await ChosenVerseService.getOneWithPoetName(
         req.params.id,
       );
-      const {status, chosenVerse, errMsg} = responseInfo.indexOneWithPoetName(service)
+      const { status, chosenVerse, errMsg } =
+        responseInfo.indexOneWithPoetName(service);
       if (errMsg) throw new AppError(status, errMsg, true);
       res.status(status).send(chosenVerse);
     } catch (error) {
@@ -64,7 +66,7 @@ export const ChosenVerseController = {
   post: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const service = await ChosenVerseService.post(req.body);
-      const {status, chosenVerse, errMsg} = responseInfo.post(service)
+      const { status, chosenVerse, errMsg } = responseInfo.post(service);
       if (errMsg) throw new AppError(status, errMsg, true);
       res.status(status).send(chosenVerse);
     } catch (error) {
@@ -75,7 +77,7 @@ export const ChosenVerseController = {
   postMany: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const service = await ChosenVerseService.postMany(req.body);
-      const {status, chosenVerses, errMsg} = responseInfo.postMany(service)
+      const { status, chosenVerses, errMsg } = responseInfo.postMany(service);
       if (errMsg) throw new AppError(status, errMsg, true);
       res.status(status).send(chosenVerses);
     } catch (error) {
@@ -85,11 +87,8 @@ export const ChosenVerseController = {
 
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const service = await ChosenVerseService.update(
-        req.params.id,
-        req.body,
-      );
-      const {status, errMsg} = responseInfo.update(service)
+      const service = await ChosenVerseService.update(req.params.id, req.body);
+      const { status, errMsg } = responseInfo.update(service);
       if (errMsg) throw new AppError(status, errMsg, true);
       res.sendStatus(status);
     } catch (error) {
@@ -100,14 +99,14 @@ export const ChosenVerseController = {
   remove: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const service = await ChosenVerseService.remove(req.params.id);
-      const {status, errMsg} = responseInfo.remove(service)
+      const { status, errMsg } = responseInfo.remove(service);
       if (errMsg) throw new AppError(status, errMsg, true);
       res.sendStatus(status);
     } catch (errors) {
       next(errors);
     }
-  }
-}
+  },
+};
 
 export const responseInfo = {
   indexWithPoetName: (
@@ -133,7 +132,7 @@ export const responseInfo = {
     return { status: HttpStatusCode.OK, chosenVerses };
   },
   indexOneWithPoetName: (
-    chosenVerse: ChosenVerseType| false,
+    chosenVerse: ChosenVerseType | false,
   ): { status: number; chosenVerse?: ChosenVerseType; errMsg?: string } => {
     if (!chosenVerse) {
       return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
@@ -152,8 +151,20 @@ export const responseInfo = {
     return { status: HttpStatusCode.CREATED, chosenVerse };
   },
   postMany: (
-    chosenVerses: { newChosenVerses: ChosenVerseType[]; inValidChosenVerses: ChosenVerseType[] } | false,
-  ): { status: number; chosenVerses?: { newChosenVerses: ChosenVerseType[]; inValidChosenVerses: ChosenVerseType[] }; errMsg?: string } => {
+    chosenVerses:
+      | {
+          newChosenVerses: ChosenVerseType[];
+          inValidChosenVerses: ChosenVerseType[];
+        }
+      | false,
+  ): {
+    status: number;
+    chosenVerses?: {
+      newChosenVerses: ChosenVerseType[];
+      inValidChosenVerses: ChosenVerseType[];
+    };
+    errMsg?: string;
+  } => {
     if (!chosenVerses) {
       return {
         status: HttpStatusCode.NOT_ACCEPTABLE,
@@ -162,7 +173,9 @@ export const responseInfo = {
     }
     return { status: HttpStatusCode.CREATED, chosenVerses };
   },
-  update: (chosenVerse: ChosenVerseType | false): { status: number; errMsg?: string } => {
+  update: (
+    chosenVerse: ChosenVerseType | false,
+  ): { status: number; errMsg?: string } => {
     if (!chosenVerse) {
       return {
         status: HttpStatusCode.NOT_ACCEPTABLE,
@@ -171,10 +184,12 @@ export const responseInfo = {
     }
     return { status: HttpStatusCode.ACCEPTED };
   },
-  remove: (chosenVerse: ChosenVerseType | false): { status: number; errMsg?: string } => {
+  remove: (
+    chosenVerse: ChosenVerseType | false,
+  ): { status: number; errMsg?: string } => {
     if (!chosenVerse) {
       return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
     }
     return { status: HttpStatusCode.ACCEPTED };
   },
-}
+};

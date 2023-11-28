@@ -1,5 +1,5 @@
 // Repository
-import {ChosenVerseDB} from './chosenVerse.repository'
+import { ChosenVerseDB } from './chosenVerse.repository';
 // Type
 import { ChosenVerseType } from '../../interfaces/chosenVerse.interface';
 // Utils
@@ -9,13 +9,13 @@ import { createSchema, updateSchema } from './chosenVerse.schema';
 
 export const ChosenVerseService = {
   async getAllWithPoetName(): Promise<ChosenVerseType[] | false> {
-    const chosenVerses = await ChosenVerseDB.getAllWithPoetName()
+    const chosenVerses = await ChosenVerseDB.getAllWithPoetName();
     if (chosenVerses.length === 0) return false;
     return chosenVerses;
   },
 
   async getRandomWithPoetName(num: number): Promise<ChosenVerseType[] | false> {
-    const chosenVerses = await ChosenVerseDB.getRandomWithPoetName(num)
+    const chosenVerses = await ChosenVerseDB.getRandomWithPoetName(num);
 
     if (chosenVerses.length === 0) return false;
     return chosenVerses;
@@ -37,9 +37,7 @@ export const ChosenVerseService = {
     return newChosenVerse;
   },
 
-  async postMany(
-    chosenVersesData: ChosenVerseType[],
-  ): Promise<
+  async postMany(chosenVersesData: ChosenVerseType[]): Promise<
     | {
         newChosenVerses: ChosenVerseType[];
         inValidChosenVerses: ChosenVerseType[];

@@ -4,51 +4,51 @@ import { ChosenVerseService } from './chosenVerse.service';
 // Repository
 import { ChosenVerseDB } from './chosenVerse.repository';
 // Types
-import {ChosenVerseType} from '../../interfaces/chosenVerse.interface'
+import { ChosenVerseType } from '../../interfaces/chosenVerse.interface';
 import { PoetType } from '../../interfaces/poet.interface';
 
 describe.concurrent('Tesing ChosenVerseService', async () => {
   describe('Testing getAllWithPoetName()', async () => {
     const chosenVerses = [
       {
-        "_id": "6371f025ac76f350635f7011",
-        "poet": {
-          "_id": "6371ea7a885e286801facca8",
-          "name": "أبو تمام"
+        _id: '6371f025ac76f350635f7011',
+        poet: {
+          _id: '6371ea7a885e286801facca8',
+          name: 'أبو تمام',
         },
-        "poem": "6371ec50df3fa96d1a941c5d",
-        "reviewed": true,
-        "tags": "الشجاعة,الحكمة",
-        "verses": [
+        poem: '6371ec50df3fa96d1a941c5d',
+        reviewed: true,
+        tags: 'الشجاعة,الحكمة',
+        verses: [
           {
-            "first": "السَيفُ أَصدَقُ أَنباءً مِنَ الكُتُبِ",
-            "sec": "في حَدِّهِ الحَدُّ بَينَ الجِدِّ وَاللَعِبِ"
+            first: 'السَيفُ أَصدَقُ أَنباءً مِنَ الكُتُبِ',
+            sec: 'في حَدِّهِ الحَدُّ بَينَ الجِدِّ وَاللَعِبِ',
           },
           {
-            "first": "بيضُ الصَفائِحِ لا سودُ الصَحائِفِ في",
-            "sec": "مُتونِهِنَّ جَلاءُ الشَكِّ وَالرِيَبِ"
-          }
-        ]
+            first: 'بيضُ الصَفائِحِ لا سودُ الصَحائِفِ في',
+            sec: 'مُتونِهِنَّ جَلاءُ الشَكِّ وَالرِيَبِ',
+          },
+        ],
       },
       {
-        "_id": "6371f025ac76f350635f7011",
-        "poet": {
-          "_id": "6371ea7a885e286801facca8",
-          "name": "أبو تمام"
+        _id: '6371f025ac76f350635f7011',
+        poet: {
+          _id: '6371ea7a885e286801facca8',
+          name: 'أبو تمام',
         },
-        "poem": "6371ec50df3fa96d1a941c5d",
-        "reviewed": true,
-        "tags": "الشجاعة,الحكمة",
-        "verses": [
+        poem: '6371ec50df3fa96d1a941c5d',
+        reviewed: true,
+        tags: 'الشجاعة,الحكمة',
+        verses: [
           {
-            "first": "السَيفُ أَصدَقُ أَنباءً مِنَ الكُتُبِ",
-            "sec": "في حَدِّهِ الحَدُّ بَينَ الجِدِّ وَاللَعِبِ"
+            first: 'السَيفُ أَصدَقُ أَنباءً مِنَ الكُتُبِ',
+            sec: 'في حَدِّهِ الحَدُّ بَينَ الجِدِّ وَاللَعِبِ',
           },
           {
-            "first": "بيضُ الصَفائِحِ لا سودُ الصَحائِفِ في",
-            "sec": "مُتونِهِنَّ جَلاءُ الشَكِّ وَالرِيَبِ"
-          }
-        ]
+            first: 'بيضُ الصَفائِحِ لا سودُ الصَحائِفِ في',
+            sec: 'مُتونِهِنَّ جَلاءُ الشَكِّ وَالرِيَبِ',
+          },
+        ],
       },
     ] as ChosenVerseType[];
 
@@ -69,33 +69,33 @@ describe.concurrent('Tesing ChosenVerseService', async () => {
   describe('Testing getRandomWithPoetName()', async () => {
     const chosenVerses = [
       {
-        "_id": "639c7ebeb95190b2fdf15465",
-        "verses": [
+        _id: '639c7ebeb95190b2fdf15465',
+        verses: [
           {
-            "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
-            "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
-            "_id": "639c7ebeb95190b2fdf15466"
+            first: 'زهرةٌ حَنَّتْ, فباحت؛ فذوت',
+            sec: 'أذْبَلَتها نَفْحةٌ لم تُكْتَمِ',
+            _id: '639c7ebeb95190b2fdf15466',
           },
           {
-            "first": "شكتِ البِثَّ لِنجمٍ ساطعٍ",
-            "sec": "ثُمَّ ظَلَّتْ في شُعاعٍ مُلهِمِ",
-            "_id": "639c7ebeb95190b2fdf15467"
-          }
-        ]
+            first: 'شكتِ البِثَّ لِنجمٍ ساطعٍ',
+            sec: 'ثُمَّ ظَلَّتْ في شُعاعٍ مُلهِمِ',
+            _id: '639c7ebeb95190b2fdf15467',
+          },
+        ],
       },
       {
-        "_id": "6371f025ac76f350635f7011",
-        "verses": [
+        _id: '6371f025ac76f350635f7011',
+        verses: [
           {
-            "first": "السَيفُ أَصدَقُ أَنباءً مِنَ الكُتُبِ",
-            "sec": "في حَدِّهِ الحَدُّ بَينَ الجِدِّ وَاللَعِبِ"
+            first: 'السَيفُ أَصدَقُ أَنباءً مِنَ الكُتُبِ',
+            sec: 'في حَدِّهِ الحَدُّ بَينَ الجِدِّ وَاللَعِبِ',
           },
           {
-            "first": "بيضُ الصَفائِحِ لا سودُ الصَحائِفِ في",
-            "sec": "مُتونِهِنَّ جَلاءُ الشَكِّ وَالرِيَبِ"
-          }
-        ]
-      }
+            first: 'بيضُ الصَفائِحِ لا سودُ الصَحائِفِ في',
+            sec: 'مُتونِهِنَّ جَلاءُ الشَكِّ وَالرِيَبِ',
+          },
+        ],
+      },
     ] as ChosenVerseType[];
 
     test('Gets data successfully from database', async () => {
@@ -114,21 +114,21 @@ describe.concurrent('Tesing ChosenVerseService', async () => {
 
   describe('Testing getOneWithPoetName()', async () => {
     const chosenVerse = {
-      "_id": "639c7ebeb95190b2fdf15465",
-      "poet": "639b5cf712eec0bb274cecd4",
-      "poem": "639c7bf9b95190b2fdf1527a",
-      "tags": "حزن,نفس",
-      "reviewed": true,
-      "verses": [
+      _id: '639c7ebeb95190b2fdf15465',
+      poet: '639b5cf712eec0bb274cecd4',
+      poem: '639c7bf9b95190b2fdf1527a',
+      tags: 'حزن,نفس',
+      reviewed: true,
+      verses: [
         {
-          "first": "زهرةٌ حَنَّتْ, فباحت؛ فذوت",
-          "sec": "أذْبَلَتها نَفْحةٌ لم تُكْتَمِ",
+          first: 'زهرةٌ حَنَّتْ, فباحت؛ فذوت',
+          sec: 'أذْبَلَتها نَفْحةٌ لم تُكْتَمِ',
         },
         {
-          "first": "شكتِ البِثَّ لِنجمٍ ساطعٍ",
-          "sec": "ثُمَّ ظَلَّتْ في شُعاعٍ مُلهِمِ",
-        }
-      ]
+          first: 'شكتِ البِثَّ لِنجمٍ ساطعٍ',
+          sec: 'ثُمَّ ظَلَّتْ في شُعاعٍ مُلهِمِ',
+        },
+      ],
     } as ChosenVerseType;
     test('Gets data successfully from Database', async () => {
       vi.spyOn(ChosenVerseDB, 'getOneWithPoetName').mockResolvedValue(
@@ -156,9 +156,9 @@ describe.concurrent('Tesing ChosenVerseService', async () => {
           first: 'لا ذَنبَ لي كَم رمت كتم فَضائِلي',
         },
       ],
-      poet = "639b5cf712eec0bb274cecd4",
-      poem = "639c7bf9b95190b2fdf1527a";
-    let chosenVerse = { tags, verses, poet, poem }  as ChosenVerseType;
+      poet = '639b5cf712eec0bb274cecd4',
+      poem = '639c7bf9b95190b2fdf1527a';
+    let chosenVerse = { tags, verses, poet, poem } as ChosenVerseType;
     test('Post data successfully after validation', async () => {
       vi.spyOn(ChosenVerseDB, 'post').mockResolvedValue(chosenVerse);
       const result = await ChosenVerseService.post(chosenVerse);
@@ -183,13 +183,13 @@ describe.concurrent('Tesing ChosenVerseService', async () => {
         tags,
         poet,
         poem,
-      }  as ChosenVerseType);
+      } as ChosenVerseType);
       expect(result3).toEqual(false);
       const result4 = await ChosenVerseService.post({
         verses,
         poet,
         poem,
-      }  as ChosenVerseType);
+      } as ChosenVerseType);
       expect(result4).toEqual(false);
     });
   });
@@ -202,16 +202,16 @@ describe.concurrent('Tesing ChosenVerseService', async () => {
           first: 'لا ذَنبَ لي كَم رمت كتم فَضائِلي',
         },
       ],
-      poet = "639b5cf712eec0bb274cecd4",
-      poem = "639c7bf9b95190b2fdf1527a";
-    let chosenVerse1 = { tags, verses, poet, poem }  as ChosenVerseType;
-    let chosenVerse2 = { tags, verses, poet, poem }  as ChosenVerseType;
-    let chosenVerse3 = { tags, verses, poet, poem }  as ChosenVerseType;
-    let chosenVerse4 = { tags, verses, poet, poem }  as ChosenVerseType;
-    let chosenVerse5 = { tags, verses, poet }  as ChosenVerseType;
-    let chosenVerse6 = { tags, verses, poem }  as ChosenVerseType;
-    let chosenVerse7 = { tags, poet, poem }  as ChosenVerseType;
-    let chosenVerse8 = { verses, poet, poem }  as ChosenVerseType;
+      poet = '639b5cf712eec0bb274cecd4',
+      poem = '639c7bf9b95190b2fdf1527a';
+    let chosenVerse1 = { tags, verses, poet, poem } as ChosenVerseType;
+    let chosenVerse2 = { tags, verses, poet, poem } as ChosenVerseType;
+    let chosenVerse3 = { tags, verses, poet, poem } as ChosenVerseType;
+    let chosenVerse4 = { tags, verses, poet, poem } as ChosenVerseType;
+    let chosenVerse5 = { tags, verses, poet } as ChosenVerseType;
+    let chosenVerse6 = { tags, verses, poem } as ChosenVerseType;
+    let chosenVerse7 = { tags, poet, poem } as ChosenVerseType;
+    let chosenVerse8 = { verses, poet, poem } as ChosenVerseType;
     test('Post valid data successfully after validation and return inValid ones', async () => {
       vi.spyOn(ChosenVerseDB, 'postMany').mockResolvedValue([
         chosenVerse1,
@@ -249,74 +249,91 @@ describe.concurrent('Tesing ChosenVerseService', async () => {
   });
 
   describe('Testing update()', async () => {
-      let tags = 'الفخر',
+    let tags = 'الفخر',
       verses = [
         {
           sec: 'فَكَأَنَّما برقعت وَجه نَهاري',
           first: 'لا ذَنبَ لي كَم رمت كتم فَضائِلي',
         },
       ],
-      poet = "639b5cf712eec0bb274cecd4",
-      poem = "639c7bf9b95190b2fdf1527a",
-      chosenVerse = { tags, verses, poet, poem }  as ChosenVerseType;
+      poet = '639b5cf712eec0bb274cecd4',
+      poem = '639c7bf9b95190b2fdf1527a',
+      chosenVerse = { tags, verses, poet, poem } as ChosenVerseType;
 
     test('Update chosenVerse data successfully after validation', async () => {
       vi.spyOn(ChosenVerseDB, 'update').mockResolvedValue(chosenVerse);
 
-      const result1 = await ChosenVerseService.update("639b5cf712eec0bb274cecd4", {
-        tags,
-      } as ChosenVerseType);
+      const result1 = await ChosenVerseService.update(
+        '639b5cf712eec0bb274cecd4',
+        {
+          tags,
+        } as ChosenVerseType,
+      );
       expect(result1).toEqual(chosenVerse);
-      const result2 = await ChosenVerseService.update("639b5cf712eec0bb274cecd4", {
-        verses,
-      } as ChosenVerseType);
+      const result2 = await ChosenVerseService.update(
+        '639b5cf712eec0bb274cecd4',
+        {
+          verses,
+        } as ChosenVerseType,
+      );
       expect(result2).toEqual(chosenVerse);
     });
     test('return false after invalid chosenVerseData', async () => {
       vi.spyOn(ChosenVerseDB, 'update').mockResolvedValue(chosenVerse);
-      const result1 = await ChosenVerseService.update("639b5cf712eec0bb274cecd4", {
-        tags: '22',
-      } as ChosenVerseType);
+      const result1 = await ChosenVerseService.update(
+        '639b5cf712eec0bb274cecd4',
+        {
+          tags: '22',
+        } as ChosenVerseType,
+      );
       expect(result1).toEqual(false);
-      const result2 = await ChosenVerseService.update("639b5cf712eec0bb274cecd4", {
-        verses: [{ first: 'ss', sec: 'sds' }],
-      } as ChosenVerseType);
+      const result2 = await ChosenVerseService.update(
+        '639b5cf712eec0bb274cecd4',
+        {
+          verses: [{ first: 'ss', sec: 'sds' }],
+        } as ChosenVerseType,
+      );
       expect(result2).toEqual(false);
     });
     test('return false after non-existing id', async () => {
       vi.spyOn(ChosenVerseDB, 'update').mockResolvedValue(null);
 
-      const result1 = await ChosenVerseService.update("639b5cf712eec0bb274cecd4", {
-        tags,
-      } as ChosenVerseType);
+      const result1 = await ChosenVerseService.update(
+        '639b5cf712eec0bb274cecd4',
+        {
+          tags,
+        } as ChosenVerseType,
+      );
       expect(result1).toEqual(false);
     });
   });
 
   describe('Testing remove()', async () => {
     let tags = 'الفخر',
-    verses = [
-      {
-        sec: 'فَكَأَنَّما برقعت وَجه نَهاري',
-        first: 'لا ذَنبَ لي كَم رمت كتم فَضائِلي',
-      },
-    ],
-    poet = "639b5cf712eec0bb274cecd4",
-    poem = "639c7bf9b95190b2fdf1527a",
-    chosenVerse = { tags, verses, poet, poem }  as ChosenVerseType;
+      verses = [
+        {
+          sec: 'فَكَأَنَّما برقعت وَجه نَهاري',
+          first: 'لا ذَنبَ لي كَم رمت كتم فَضائِلي',
+        },
+      ],
+      poet = '639b5cf712eec0bb274cecd4',
+      poem = '639c7bf9b95190b2fdf1527a',
+      chosenVerse = { tags, verses, poet, poem } as ChosenVerseType;
 
     test('Successfully deletes poem', async () => {
       vi.spyOn(ChosenVerseDB, 'remove').mockResolvedValue(chosenVerse);
 
       const result1 = await ChosenVerseService.remove(
-        "639b5cf712eec0bb274cecd4",
+        '639b5cf712eec0bb274cecd4',
       );
       expect(result1).toEqual(chosenVerse);
     });
     test('return false for non-existing id', async () => {
       vi.spyOn(ChosenVerseDB, 'remove').mockResolvedValue(null);
 
-      const result1 = await ChosenVerseService.remove("639b5cf712eec0bb274cecd4");
+      const result1 = await ChosenVerseService.remove(
+        '639b5cf712eec0bb274cecd4',
+      );
       expect(result1).toEqual(false);
     });
   });
