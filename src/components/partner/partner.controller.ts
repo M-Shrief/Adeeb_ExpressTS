@@ -3,17 +3,17 @@ import { JwtPayload } from 'jsonwebtoken';
 // Services
 import { PartnerService } from './partner.service';
 // Types
-import { ERROR_MSG } from '../../interfaces/partner.interface';
+import { ERROR_MSG, PartnerType } from '../../interfaces/partner.interface';
 // Utils
 import { decodeToken, signToken } from '../../utils/auth';
 import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
-const signTokenFn = (name: string, _id: string) =>
+const signTokenFn = (name: string, __id: string) =>
   signToken(
     {
       name,
-      _id,
+      __id,
       permissions: ['partner:read', 'partner:write'],
     },
     {
@@ -28,11 +28,10 @@ export const PartnerController = {
       const decoded = decodeToken(
         req.headers.authorization!.slice(7),
       ) as JwtPayload;
-      const partner = await PartnerService.getInfo(decoded._id);
-
-      if (!partner)
-        throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      res.status(HttpStatusCode.OK).send(partner);
+      const service = await PartnerService.getInfo(decoded._id);
+      const { status, partner, errMsg } = responseInfo.indexInfo(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(partner);
     } catch (error) {
       next(error);
     }
@@ -40,23 +39,22 @@ export const PartnerController = {
 
   signup: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await PartnerService.signup(req.body);
-      if (!partner)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      const accessToken = signTokenFn(partner.name, partner._id);
-      res.status(HttpStatusCode.CREATED).json({
-        Success: true,
-        partner: {
-          _id: partner._id,
-          name: partner.name,
-          phone: partner.phone,
-        },
-        accessToken,
-      });
+      const service = await PartnerService.signup(req.body);
+      const { status, partner, errMsg } = responseInfo.signup(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      if (partner) {
+        const accessToken = signTokenFn(partner.name, partner._id);
+
+        res.status(status).json({
+          Success: true,
+          partner: {
+            _id: partner._id,
+            name: partner.name,
+            phone: partner.phone,
+          },
+          accessToken,
+        });
+      }
     } catch (error) {
       next(error);
     }
@@ -64,45 +62,42 @@ export const PartnerController = {
 
   login: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const partner = await PartnerService.login(
+      const service = await PartnerService.login(
         req.body.phone,
         req.body.password,
       );
-      if (!partner)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-
-      const accessToken = signTokenFn(partner.name, partner._id);
-      res.status(HttpStatusCode.ACCEPTED).json({
-        success: true,
-        partner: {
-          _id: partner._id,
-          name: partner.name,
-          phone: partner.phone,
-        },
-        accessToken,
-      });
+      const { status, partner, errMsg } = responseInfo.login(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      if (partner) {
+        const accessToken = signTokenFn(partner.name, partner._id);
+        res.status(status).json({
+          success: true,
+          partner: {
+            _id: partner._id,
+            name: partner.name,
+            phone: partner.phone,
+          },
+          accessToken,
+        });
+      }
     } catch (error) {
       next(error);
     }
   },
+
+  // logout: async (req: Request, res: Response, next: NextFunction) => {
+  //   res.status(HttpStatusCode.ACCEPTED).send('logged out');
+  // },
 
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const decoded = decodeToken(
         req.headers.authorization!.slice(7),
       ) as JwtPayload;
-      const partner = await PartnerService.update(decoded._id, req.body);
-      if (!partner)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.ACCEPTED).send(partner);
+      const service = await PartnerService.update(decoded._id, req.body);
+      const { status, errMsg } = responseInfo.update(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.sendStatus(status);
     } catch (error) {
       next(error);
     }
@@ -113,12 +108,65 @@ export const PartnerController = {
       const decoded = decodeToken(
         req.headers.authorization!.slice(7),
       ) as JwtPayload;
-      const partner = await PartnerService.remove(decoded._id);
-      if (!partner)
-        throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      res.status(HttpStatusCode.ACCEPTED).send('Deleted Successfully');
+      const service = await PartnerService.remove(decoded._id);
+      const { status, errMsg } = responseInfo.remove(service);
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.sendStatus(status);
     } catch (errors) {
       next(errors);
     }
+  },
+};
+
+export const responseInfo = {
+  indexInfo: (
+    partner: PartnerType | false,
+  ): { status: number; partner?: PartnerType; errMsg?: string } => {
+    if (!partner) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.OK, partner };
+  },
+  signup: (
+    partner: PartnerType | false,
+  ): { status: number; partner?: PartnerType; errMsg?: string } => {
+    if (!partner) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.CREATED, partner };
+  },
+  login: (
+    partner: PartnerType | false,
+  ): { status: number; partner?: PartnerType; errMsg?: string } => {
+    if (!partner) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.ACCEPTED, partner };
+  },
+
+  update: (
+    partner: PartnerType | false,
+  ): { status: number; errMsg?: string } => {
+    if (!partner) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.ACCEPTED };
+  },
+  remove: (
+    partner: PartnerType | false,
+  ): { status: number; errMsg?: string } => {
+    if (!partner) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.ACCEPTED };
   },
 };
