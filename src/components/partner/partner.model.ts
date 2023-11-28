@@ -8,12 +8,12 @@ const partnerSchema = new Schema(
     name: {
       type: String,
       required: true,
-      length: {minlength: 4, maxlength: 50},
+      length: { minlength: 4, maxlength: 50 },
     },
     phone: {
       type: String,
       required: true,
-      length: {minlength: 4, maxlength: 50},
+      length: { minlength: 4, maxlength: 50 },
       unique: true,
     },
     password: {
