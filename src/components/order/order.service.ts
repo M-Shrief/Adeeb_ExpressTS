@@ -1,19 +1,19 @@
 // Redis
-import redisClient  from '../../redis';
+import redisClient from '../../redis';
 // Models
 import { Order } from './order.model';
 // Types
 import { OrderType } from '../../interfaces/order.interface';
 // Schema
 import { createSchema, updateSchema } from './order.schema';
-import { logger } from '../../utils/logger';
-export class OrderService {
-  public async getGuestOrders(
+
+export const OrderService = {
+  async getGuestOrders(
     name: string,
     phone: string,
   ): Promise<OrderType[] | false> {
-    let orders : OrderType[];
-    
+    let orders: OrderType[];
+
     orders = await Order.find(
       { name, phone },
       {
@@ -27,17 +27,16 @@ export class OrderService {
       },
       {
         sort: {
-          createdAt: -1
-        }
-      }
+          createdAt: -1,
+        },
+      },
     );
-
 
     if (orders.length === 0) return false;
     return orders;
-  }
+  },
 
-  public async getPartnerOrders(partner: string): Promise<OrderType[] | false> {
+  async getPartnerOrders(partner: string): Promise<OrderType[] | false> {
     let orders: OrderType[];
 
     orders = await Order.find(
@@ -54,16 +53,16 @@ export class OrderService {
       },
       {
         sort: {
-          createdAt: -1
-        }
-      }
+          createdAt: -1,
+        },
+      },
     );
-      
+
     if (orders.length === 0) return false;
     return orders;
-  }
+  },
 
-  public async post(orderData: OrderType): Promise<OrderType | false> {
+  async post(orderData: OrderType): Promise<OrderType | false> {
     const isValid = await createSchema.isValid(orderData);
     if (!isValid) return false;
     const order = new Order();
@@ -79,12 +78,9 @@ export class OrderService {
     const newOrder = await order.save();
     if (!newOrder) return false;
     return newOrder;
-  }
+  },
 
-  public async update(
-    id: string,
-    orderData: OrderType,
-  ): Promise<OrderType | false> {
+  async update(id: string, orderData: OrderType): Promise<OrderType | false> {
     const isValid = await updateSchema.isValid(orderData);
     if (!isValid) return false;
     const order = await Order.findById(id);
@@ -92,11 +88,11 @@ export class OrderService {
     const newOrder = await order.updateOne({ $set: orderData });
     if (!newOrder) return false;
     return newOrder;
-  }
+  },
 
-  public async remove(id: string): Promise<OrderType | false> {
+  async remove(id: string): Promise<OrderType | false> {
     const order = await Order.findByIdAndRemove(id);
     if (!order) return false;
     return order;
-  }
-}
+  },
+};
