@@ -12,7 +12,7 @@ export const OrderService = {
   ): Promise<OrderType[] | false> {
     let orders: OrderType[];
 
-    orders = await OrderDB.getGuestOrders(name, phone)
+    orders = await OrderDB.getGuestOrders(name, phone);
 
     if (orders.length === 0) return false;
     return orders;
@@ -21,7 +21,7 @@ export const OrderService = {
   async getPartnerOrders(partner: string): Promise<OrderType[] | false> {
     let orders: OrderType[];
 
-    orders = await OrderDB.getPartnerOrders(partner)
+    orders = await OrderDB.getPartnerOrders(partner);
 
     if (orders.length === 0) return false;
     return orders;
@@ -30,7 +30,7 @@ export const OrderService = {
   async post(orderData: OrderType): Promise<OrderType | false> {
     const isValid = await createSchema.isValid(orderData);
     if (!isValid) return false;
-    const newOrder = await OrderDB.post(orderData)
+    const newOrder = await OrderDB.post(orderData);
     if (!newOrder) return false;
     return newOrder;
   },
@@ -38,7 +38,7 @@ export const OrderService = {
   async update(id: string, orderData: OrderType): Promise<OrderType | false> {
     const isValid = await updateSchema.isValid(orderData);
     if (!isValid) return false;
-    const newOrder = await OrderDB.update(id, orderData)
+    const newOrder = await OrderDB.update(id, orderData);
     if (!newOrder) return false;
     return newOrder;
   },
