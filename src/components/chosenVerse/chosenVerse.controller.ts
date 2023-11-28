@@ -11,20 +11,17 @@ import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 export const ChosenVerseController = {
+
   indexWithPoetName: async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const chosenVerses = await ChosenVerseService.getAllWithPoetName();
-      if (!chosenVerses)
-        throw new AppError(
-          HttpStatusCode.NOT_FOUND,
-          ERROR_MSG.NOT_AVAILABLE,
-          true,
-        );
-      res.status(HttpStatusCode.OK).send(chosenVerses);
+      const service = await ChosenVerseService.getAllWithPoetName();
+      const {status, chosenVerses, errMsg} = responseInfo.indexWithPoetName(service)
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(chosenVerses);
     } catch (error) {
       next(error);
     }
@@ -36,16 +33,12 @@ export const ChosenVerseController = {
     next: NextFunction,
   ) => {
     try {
-      const chosenVerses = await ChosenVerseService.getRandomWithPoetName(
+      const service = await ChosenVerseService.getRandomWithPoetName(
         Number(req.query.num),
       );
-      if (!chosenVerses)
-        throw new AppError(
-          HttpStatusCode.NOT_FOUND,
-          ERROR_MSG.NOT_AVAILABLE,
-          true,
-        );
-      res.status(HttpStatusCode.OK).send(chosenVerses);
+      const {status, chosenVerses, errMsg} = responseInfo.indexRandomWithPoetName(service)
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(chosenVerses);
     } catch (error) {
       next(error);
     }
@@ -57,12 +50,12 @@ export const ChosenVerseController = {
     next: NextFunction,
   ) => {
     try {
-      const chosenVerse = await ChosenVerseService.getOneWithPoetName(
+      const service = await ChosenVerseService.getOneWithPoetName(
         req.params.id,
       );
-      if (!chosenVerse)
-        throw new AppError(HttpStatusCode.NOT_FOUND, ERROR_MSG.NOT_FOUND, true);
-      res.status(HttpStatusCode.OK).send(chosenVerse);
+      const {status, chosenVerse, errMsg} = responseInfo.indexOneWithPoetName(service)
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(chosenVerse);
     } catch (error) {
       next(error);
     }
@@ -70,16 +63,10 @@ export const ChosenVerseController = {
 
   post: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerse = await ChosenVerseService.post(
-        req.body as ChosenVerseType,
-      );
-      if (!chosenVerse)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.CREATED).send(chosenVerse);
+      const service = await ChosenVerseService.post(req.body);
+      const {status, chosenVerse, errMsg} = responseInfo.post(service)
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(chosenVerse);
     } catch (error) {
       next(error);
     }
@@ -87,16 +74,10 @@ export const ChosenVerseController = {
 
   postMany: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerses = await ChosenVerseService.postMany(
-        req.body as ChosenVerseType[],
-      );
-      if (!chosenVerses)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.CREATED).send(chosenVerses);
+      const service = await ChosenVerseService.postMany(req.body);
+      const {status, chosenVerses, errMsg} = responseInfo.postMany(service)
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.status(status).send(chosenVerses);
     } catch (error) {
       next(error);
     }
@@ -104,17 +85,13 @@ export const ChosenVerseController = {
 
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerse = await ChosenVerseService.update(
+      const service = await ChosenVerseService.update(
         req.params.id,
         req.body,
       );
-      if (!chosenVerse)
-        throw new AppError(
-          HttpStatusCode.NOT_ACCEPTABLE,
-          ERROR_MSG.NOT_VALID,
-          true,
-        );
-      res.status(HttpStatusCode.ACCEPTED).send(chosenVerse);
+      const {status, errMsg} = responseInfo.update(service)
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.sendStatus(status);
     } catch (error) {
       next(error);
     }
@@ -122,16 +99,82 @@ export const ChosenVerseController = {
 
   remove: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const chosenVerse = await ChosenVerseService.remove(req.params.id);
-      if (!chosenVerse)
-        throw new AppError(
-          HttpStatusCode.NOT_FOUND,
-          ERROR_MSG.NOT_AVAILABLE,
-          true,
-        );
-      res.status(HttpStatusCode.ACCEPTED).send('Deleted Successfully');
+      const service = await ChosenVerseService.remove(req.params.id);
+      const {status, errMsg} = responseInfo.remove(service)
+      if (errMsg) throw new AppError(status, errMsg, true);
+      res.sendStatus(status);
     } catch (errors) {
       next(errors);
     }
+  }
+}
+
+export const responseInfo = {
+  indexWithPoetName: (
+    chosenVerses: ChosenVerseType[] | false,
+  ): { status: number; chosenVerses?: ChosenVerseType[]; errMsg?: string } => {
+    if (!chosenVerses) {
+      return {
+        status: HttpStatusCode.NOT_FOUND,
+        errMsg: ERROR_MSG.NOT_AVAILABLE,
+      };
+    }
+    return { status: HttpStatusCode.OK, chosenVerses };
   },
-};
+  indexRandomWithPoetName: (
+    chosenVerses: ChosenVerseType[] | false,
+  ): { status: number; chosenVerses?: ChosenVerseType[]; errMsg?: string } => {
+    if (!chosenVerses) {
+      return {
+        status: HttpStatusCode.NOT_FOUND,
+        errMsg: ERROR_MSG.NOT_AVAILABLE,
+      };
+    }
+    return { status: HttpStatusCode.OK, chosenVerses };
+  },
+  indexOneWithPoetName: (
+    chosenVerse: ChosenVerseType| false,
+  ): { status: number; chosenVerse?: ChosenVerseType; errMsg?: string } => {
+    if (!chosenVerse) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.OK, chosenVerse };
+  },
+  post: (
+    chosenVerse: ChosenVerseType | false,
+  ): { status: number; chosenVerse?: ChosenVerseType; errMsg?: string } => {
+    if (!chosenVerse) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.CREATED, chosenVerse };
+  },
+  postMany: (
+    chosenVerses: { newChosenVerses: ChosenVerseType[]; inValidChosenVerses: ChosenVerseType[] } | false,
+  ): { status: number; chosenVerses?: { newChosenVerses: ChosenVerseType[]; inValidChosenVerses: ChosenVerseType[] }; errMsg?: string } => {
+    if (!chosenVerses) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.CREATED, chosenVerses };
+  },
+  update: (chosenVerse: ChosenVerseType | false): { status: number; errMsg?: string } => {
+    if (!chosenVerse) {
+      return {
+        status: HttpStatusCode.NOT_ACCEPTABLE,
+        errMsg: ERROR_MSG.NOT_VALID,
+      };
+    }
+    return { status: HttpStatusCode.ACCEPTED };
+  },
+  remove: (chosenVerse: ChosenVerseType | false): { status: number; errMsg?: string } => {
+    if (!chosenVerse) {
+      return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
+    }
+    return { status: HttpStatusCode.ACCEPTED };
+  },
+}
