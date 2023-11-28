@@ -1,5 +1,5 @@
-// Models
-import Partner from './partner.model';
+// Repository
+import {PartnerDB} from './partner.repository'
 // Types
 import { PartnerType } from '../../interfaces/partner.interface';
 // Utils
@@ -9,11 +9,7 @@ import { createSchema, updateSchema } from './partner.schema';
 
 export const PartnerService = {
   async getInfo(id: string): Promise<PartnerType | false> {
-    const partner = await Partner.findById(id, {
-      name: 1,
-      address: 1,
-      phone: 1,
-    });
+    const partner = await PartnerDB.getInfo(id);
 
     if (!partner) return false;
     return partner;
@@ -24,22 +20,13 @@ export const PartnerService = {
     if (!isValid) return false;
     const password = await hashPassword(partnerData.password);
 
-    const partner = new Partner({
-      name: partnerData.name,
-      phone: partnerData.phone,
-      password,
-    });
-
-    const newPartner = await partner.save();
+    const newPartner = await PartnerDB.signup({name: partnerData.name, phone: partnerData.phone, password} as PartnerType)
     if (!newPartner) return false;
-    return partner;
+    return newPartner;
   },
 
   async login(phone: string, password: string): Promise<PartnerType | false> {
-    const existingPartner = await Partner.findOne(
-      { phone },
-      { name: 1, phone: 1, password: 1 },
-    );
+    const existingPartner = await PartnerDB.login(phone);
     if (!existingPartner) return false;
 
     const isValid = await comparePassword(password, existingPartner.password);
@@ -54,15 +41,13 @@ export const PartnerService = {
   ): Promise<PartnerType | false> {
     const isValid = await updateSchema.isValid(partnerData);
     if (!isValid) return false;
-    const partner = await Partner.findById(id);
-    if (!partner) return false;
-    const newPartner = await partner.updateOne({ $set: partnerData });
+    const newPartner = await PartnerDB.update(id, partnerData);
     if (!newPartner) return false;
     return newPartner;
   },
 
   async remove(id: string): Promise<PartnerType | false> {
-    const partner = await Partner.findByIdAndRemove(id);
+    const partner = await PartnerDB.remove(id);
     if (!partner) return false;
     return partner;
   },
