@@ -16,47 +16,47 @@ router.get(
   '/proses/random',
   validate([
     // it doesn't give error when num != number
-    query('num').optional().isInt().withMessage(ERROR_MSG.NUM),
+    query('num', ERROR_MSG.NUM).optional().isInt(),
   ]),
   ProseController.indexRandomWithPoetName,
 );
 router.get(
   '/prose/:id',
-  validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+  validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   ProseController.indexOneWithPoetName,
 );
 router.post('/proses', ProseController.postMany);
 router.post(
   '/prose',
   validate([
-    body('poet').isMongoId().withMessage(ERROR_MSG.POET),
+    body('poet', ERROR_MSG.POET).isMongoId(),
 
-    body('tags').isString().escape().withMessage(ERROR_MSG.TAGS),
+    body('tags', ERROR_MSG.TAGS).isString().escape(),
 
-    body('qoute').isString().withMessage(ERROR_MSG.QOUTE),
+    body('qoute', ERROR_MSG.QOUTE).isString(),
 
-    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+    body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
   ]),
   ProseController.post,
 );
 router.put(
   '/prose/:id',
   validate([
-    param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
+    param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
-    body('poet').optional().isMongoId().withMessage(ERROR_MSG.POET),
+    body('poet', ERROR_MSG.POET).optional().isMongoId(),
 
-    body('tags').optional().isString().escape().withMessage(ERROR_MSG.TAGS),
+    body('tags', ERROR_MSG.TAGS).optional().isString().escape(),
 
-    body('qoute').optional().isString().withMessage(ERROR_MSG.QOUTE),
+    body('qoute', ERROR_MSG.QOUTE).optional().isString(),
 
-    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+    body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
   ]),
   ProseController.update,
 );
 router.delete(
   '/prose/:id',
-  validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+  validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   ProseController.remove,
 );
 

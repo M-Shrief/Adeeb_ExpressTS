@@ -15,7 +15,7 @@ router.get('/poems_intros', setCache, PoemController.indexIntrosWithPoetName);
 router.get(
   '/poem/:id',
   [
-    validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+    validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
     setCache,
   ],
   PoemController.indexOneWithPoet,
@@ -24,43 +24,41 @@ router.post('/poems', PoemController.postMany);
 router.post(
   '/poem',
   validate([
-    body('intro').isString().escape().withMessage(ERROR_MSG.INTRO),
+    body('intro', ERROR_MSG.INTRO).isString().escape(),
 
-    body('poet').isMongoId().withMessage(ERROR_MSG.POET),
+    body('poet', ERROR_MSG.POET).isMongoId(),
 
-    body('verses').isArray().withMessage(ERROR_MSG.VERSES),
-    body('verses.*.first').isString().escape().withMessage(ERROR_MSG.VERSES),
+    body('verses', ERROR_MSG.VERSES).isArray(),
+    body('verses.*.first', ERROR_MSG.VERSES).isString().escape(),
 
-    body('verses.*.sec').isString().escape().withMessage(ERROR_MSG.VERSES),
+    body('verses.*.sec',  ERROR_MSG.VERSES).isString().escape(),
 
-    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+    body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
   ]),
   PoemController.post,
 );
 router.put(
   '/poem/:id',
   validate([
-    param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
+    param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
-    body('intro').optional().isString().escape().withMessage(ERROR_MSG.INTRO),
+    body('intro', ERROR_MSG.INTRO).optional().isString().escape(),
 
-    body('poet').optional().isMongoId().withMessage(ERROR_MSG.POET),
+    body('poet', ERROR_MSG.POET).optional().isMongoId(),
 
-    body('verses').optional().isArray().withMessage(ERROR_MSG.VERSES),
+    body('verses', ERROR_MSG.VERSES).optional().isArray(),
 
-    body('verses.*.first')
+    body('verses.*.first', ERROR_MSG.VERSES)
       .optional()
       .isString()
-      .escape()
-      .withMessage(ERROR_MSG.VERSES),
+      .escape(),
 
-    body('verses.*.sec')
+    body('verses.*.sec',  ERROR_MSG.VERSES)
       .optional()
       .isString()
-      .escape()
-      .withMessage(ERROR_MSG.VERSES),
+      .escape(),
 
-    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+    body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
   ]),
   PoemController.update,
 );
@@ -68,7 +66,7 @@ router.put(
 router.delete(
   '/poem/:id',
   validate([
-    param('id').optional().isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
+    param('id', ERROR_MSG.NOT_FOUND).optional().isMongoId(),
   ]),
   PoemController.remove,
 );

@@ -14,28 +14,28 @@ const router: Router = Router();
 router.get('/chosenverses', setCache, ChosenVerseController.indexWithPoetName);
 router.get(
   '/chosenverses/random',
-  validate([query('num').optional().isInt().withMessage(ERROR_MSG.NUM)]),
+  validate([query('num', ERROR_MSG.NUM).optional().isInt()]),
   ChosenVerseController.indexRandomWithPoetName,
 );
 router.get(
   '/chosenverse/:id',
-  validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+  validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   ChosenVerseController.indexOneWithPoetName,
 );
 router.post('/chosenverses', ChosenVerseController.postMany);
 router.post(
   '/chosenverse',
   validate([
-    body('poet').isMongoId().withMessage(ERROR_MSG.POET),
+    body('poet', ERROR_MSG.POET).isMongoId(),
 
-    body('poem').isMongoId().withMessage(ERROR_MSG.POEM),
+    body('poem', ERROR_MSG.POEM).isMongoId(),
 
-    body('tags').isString().escape().withMessage(ERROR_MSG.TAGS),
+    body('tags', ERROR_MSG.TAGS).isString().escape(),
 
-    body('verses').isArray().withMessage(ERROR_MSG.VERSES),
-    body('verses.*.first').isString().escape().withMessage(ERROR_MSG.VERSES),
-    body('verses.*.sec').isString().escape().withMessage(ERROR_MSG.VERSES),
-    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+    body('verses', ERROR_MSG.VERSES).isArray(),
+    body('verses.*.first', ERROR_MSG.VERSES).isString().escape(),
+    body('verses.*.sec', ERROR_MSG.VERSES).isString().escape(),
+    body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
   ]),
   ChosenVerseController.post,
 );
@@ -44,35 +44,33 @@ router.post('/chosenverses', ChosenVerseController.postMany);
 router.put(
   '/chosenverse/:id',
   validate([
-    param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
+    param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
-    body('poet').optional().isMongoId().withMessage(ERROR_MSG.POET),
+    body('poet', ERROR_MSG.POET).optional().isMongoId(),
 
-    body('poem').optional().isMongoId().withMessage(ERROR_MSG.POEM),
+    body('poem', ERROR_MSG.POEM).optional().isMongoId(),
 
-    body('tags').optional().isString().escape().withMessage(ERROR_MSG.TAGS),
+    body('tags', ERROR_MSG.TAGS).optional().isString().escape(),
 
-    body('verses').optional().isArray().withMessage(ERROR_MSG.VERSES),
+    body('verses').optional().isArray(),
 
-    body('verses.*.first')
+    body('verses.*.first', ERROR_MSG.VERSES)
       .optional()
       .isString()
-      .escape()
-      .withMessage(ERROR_MSG.VERSES),
+      .escape(),
 
-    body('verses.*.sec')
+    body('verses.*.sec', ERROR_MSG.VERSES)
       .optional()
       .isString()
-      .escape()
-      .withMessage(ERROR_MSG.VERSES),
+      .escape(),
 
-    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+    body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
   ]),
   ChosenVerseController.update,
 );
 router.delete(
   '/chosenverse/:id',
-  validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+  validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   ChosenVerseController.remove,
 );
 

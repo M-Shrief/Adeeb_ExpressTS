@@ -20,12 +20,11 @@ router.post(
   '/orders/guest',
   [
     validate([
-      body('name').isString().escape().withMessage(ERROR_MSG.NAME),
-      body('phone')
+      body('name', ERROR_MSG.NAME).isString().escape(),
+      body('phone', ERROR_MSG.PHONE)
         .isString()
         .escape()
-        // .isMobilePhone('any')
-        .withMessage(ERROR_MSG.PHONE),
+        // .isMobilePhone('any'),
     ]),
     setCache,
   ],
@@ -46,38 +45,37 @@ router.post(
   '/order/guest',
   [
     validate([
-      body('name').isString().escape().withMessage(ERROR_MSG.NAME),
+      body('name', ERROR_MSG.NAME).isString().escape(),
 
-      body('phone')
+      body('phone', ERROR_MSG.PHONE)
         .isString()
-        .escape()
+        .escape(),
         // .isMobilePhone('any')
-        .withMessage(ERROR_MSG.PHONE),
 
-      body('address').isString().escape().withMessage(ERROR_MSG.ADDRESS), // should have more constraints
+      body('address', ERROR_MSG.ADDRESS).isString().escape(), // should have more constraints
 
-      body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+      body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
 
-      body('completed').optional().isBoolean().withMessage(ERROR_MSG.COMPLETED),
+      body('completed', ERROR_MSG.COMPLETED).optional().isBoolean(),
 
-      body('products').notEmpty().isArray().withMessage(ERROR_MSG.PRODUCTS),
+      body('products').notEmpty().isArray(),
 
       body('products.*.fontType')
         .optional()
         .isString()
-        .withMessage(ERROR_MSG.PRODUCTS),
+        ,
       body('products.*.fontColor')
         .optional()
         .isString()
-        .withMessage(ERROR_MSG.PRODUCTS),
+        ,
       body('products.*.backgroundColor')
         .optional()
         .isString()
-        .withMessage(ERROR_MSG.PRODUCTS),
+        ,
       body('products.*.print')
         .optional()
         .isObject()
-        .withMessage(ERROR_MSG.PRODUCTS),
+        ,
     ]),
   ],
   OrderController.postGuest,
@@ -90,7 +88,7 @@ router.post(
     guard.check(['partner:read', 'partner:write']),
     authErrorHandler,
     validate([
-      body('name').isString().escape().withMessage(ERROR_MSG.NAME),
+      body('name', ERROR_MSG.NAME).isString().escape(),
 
       body('phone')
         .isString()
@@ -98,30 +96,26 @@ router.post(
         // .isMobilePhone('any')
         .withMessage(ERROR_MSG.PHONE),
 
-      body('address').isString().escape().withMessage(ERROR_MSG.ADDRESS), // should have more constraints
+      body('address', ERROR_MSG.ADDRESS).isString().escape(), // should have more constraints
 
-      body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+      body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
 
-      body('completed').optional().isBoolean().withMessage(ERROR_MSG.COMPLETED),
+      body('completed', ERROR_MSG.COMPLETED).optional().isBoolean(),
 
-      body('products').notEmpty().isArray().withMessage(ERROR_MSG.PRODUCTS),
+      body('products', ERROR_MSG.PRODUCTS).notEmpty().isArray(),
 
-      body('products.*.fontType')
+      body('products.*.fontType', ERROR_MSG.PRODUCTS)
         .optional()
-        .isString()
-        .withMessage(ERROR_MSG.PRODUCTS),
-      body('products.*.fontColor')
+        .isString(),
+      body('products.*.fontColor', ERROR_MSG.PRODUCTS)
         .optional()
-        .isString()
-        .withMessage(ERROR_MSG.PRODUCTS),
-      body('products.*.backgroundColor')
+        .isString(),
+      body('products.*.backgroundColor', ERROR_MSG.PRODUCTS)
         .optional()
-        .isString()
-        .withMessage(ERROR_MSG.PRODUCTS),
-      body('products.*.prints')
+        .isString(),
+      body('products.*.prints', ERROR_MSG.PRODUCTS)
         .optional()
-        .isArray()
-        .withMessage(ERROR_MSG.PRODUCTS),
+        .isArray(),
     ]),
   ],
   OrderController.postPartner,
@@ -130,57 +124,51 @@ router.post(
 router.put(
   '/order/:id',
   validate([
-    param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND),
+    param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
-    body('partner').optional().isMongoId().withMessage(ERROR_MSG.PARTNER),
+    body('partner', ERROR_MSG.PARTNER).optional().isMongoId(),
 
-    body('name').optional().isString().escape().withMessage(ERROR_MSG.NAME),
+    body('name', ERROR_MSG.NAME).optional().isString().escape(),
 
-    body('phone')
+    body('phone', ERROR_MSG.PHONE)
       .optional()
       .escape()
-      .isString()
+      .isString(),
       // .isMobilePhone('any')
-      .withMessage(ERROR_MSG.PHONE),
 
-    body('address')
+    body('address', ERROR_MSG.ADDRESS)
       .optional()
       .isString()
-      .escape()
-      .withMessage(ERROR_MSG.ADDRESS),
+      .escape(),
+      
 
-    body('reviewed').optional().isBoolean().withMessage(ERROR_MSG.REVIEWED),
+    body('reviewed', ERROR_MSG.REVIEWED).optional().isBoolean(),
 
-    body('completed').optional().isBoolean().withMessage(ERROR_MSG.COMPLETED),
+    body('completed', ERROR_MSG.COMPLETED).optional().isBoolean(),
 
-    body('products')
+    body('products', ERROR_MSG.PRODUCTS)
       .optional()
-      .isArray({ min: 1 })
-      .withMessage(ERROR_MSG.PRODUCTS),
+      .isArray({ min: 1 }),
 
-    body('products.*.fontType')
+    body('products.*.fontType', ERROR_MSG.PRODUCTS)
       .optional()
-      .isString()
-      .withMessage(ERROR_MSG.PRODUCTS),
-    body('products.*.fontColor')
+      .isString(),
+    body('products.*.fontColor', ERROR_MSG.PRODUCTS)
       .optional()
-      .isString()
-      .withMessage(ERROR_MSG.PRODUCTS),
-    body('products.*.backgroundColor')
+      .isString(),
+    body('products.*.backgroundColor', ERROR_MSG.PRODUCTS)
       .optional()
-      .isString()
-      .withMessage(ERROR_MSG.PRODUCTS),
-    body('products.*.print.*')
+      .isString(),
+    body('products.*.print.*', ERROR_MSG.PRODUCTS)
       .optional()
-      .isString()
-      .withMessage(ERROR_MSG.PRODUCTS),
+      .isString(),
   ]),
   OrderController.update,
 );
 
 router.delete(
   '/order/:id',
-  validate([param('id').isMongoId().withMessage(ERROR_MSG.NOT_FOUND)]),
+  validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   OrderController.remove,
 );
 
