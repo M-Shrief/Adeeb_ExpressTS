@@ -17,7 +17,7 @@ export let JWT_PRIVATE: string = '';
 if (process.env.JWT_PRIVATE_FILE) {
   JWT_PRIVATE = fs.readFileSync(process.env.JWT_PRIVATE_FILE!).toString().trim()
 } else {
-  logger.warn("JWT Private key is not defined")
+  console.error("JWT Private key is not defined")
 }
 
 export const {
