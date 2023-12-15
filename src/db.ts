@@ -1,42 +1,32 @@
 import mongoose from 'mongoose';
 // config
-import { DB_NAME, DB_URL } from './config';
+import { DB_URL } from './config';
 // Utils
 import { logger } from './utils/logger';
 
+
+mongoose.set('strictQuery', true);
+
+// Create the database connection
 const options = {
-  // for development
-  dbName: DB_NAME,
-  autoIndex: true,
+  // autoIndex: true,
   // minPoolSize: 5, // Maintain up to x socket connections
   // maxPoolSize: 10, // Maintain up to x socket connections
   connectTimeoutMS: 10 * 1000, // Give up initial connection after 10 seconds
   // socketTimeoutMS: 45 * 1000, // Close sockets after 45 seconds of inactivity
 };
-
-mongoose.set('strictQuery', true);
-
-// Create the database connection
-
-export const connectDB = async() => {
-  try {
-    mongoose.connect(DB_URL as string, options)
-    logger.info(`Mongoose connection done`);
-  } catch (error) {
-    logger.info('Mongoose connection error');
-    logger.error(error);
-  };
-}
+export const connectDB = async() => await mongoose.connect(DB_URL, options)
 
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', () => {
-  logger.debug('Mongoose default connection open to ' + DB_URL);
+  logger.info('Mongoose default connection open to: ' + DB_URL);
 });
 
 // If the connection throws an error
 mongoose.connection.on('error', (err) => {
-  logger.error('Mongoose default connection error: ' + err);
+  logger.error(`can't connect to: ${DB_URL}`)
+  logger.error('error: ' + err);
   // exit(1) to have PM2 start it again
   process.exit(1);
 });
