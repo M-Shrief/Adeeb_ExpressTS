@@ -1,10 +1,17 @@
 import { createClient } from 'redis';
 // Utils
 import { logger } from './utils/logger';
+// Config
+import { REDIS } from './config';
 
 
 
-const redisClient = createClient();
+const redisClient = REDIS
+? createClient({
+    // format--> redis[s]://[[username][:password]@][host][:port][/db-number]:
+    url: REDIS,
+  })
+: createClient();
 
 redisClient.on('connect', () => logger.info('Cache is connecting'));
 redisClient.on('ready', () => logger.info('Cache is ready'));
