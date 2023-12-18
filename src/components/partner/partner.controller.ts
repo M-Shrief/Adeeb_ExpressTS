@@ -9,11 +9,11 @@ import { decodeToken, signToken } from '../../utils/auth';
 import { AppError } from '../../utils/errorsCenter/appError';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
-const signTokenFn = (name: string, __id: string) =>
+const signTokenFn = (name: string, _id: string) =>
   signToken(
     {
       name,
-      __id,
+      _id,
       permissions: ['partner:read', 'partner:write'],
     },
     {

@@ -88,7 +88,7 @@ router.post(
     guard.check(['partner:read', 'partner:write']),
     authErrorHandler,
     validate([
-      body('name', ERROR_MSG.NAME).isString().escape(),
+      // body('name', ERROR_MSG.NAME).isString().escape(),
 
       body('phone')
         .isString()
