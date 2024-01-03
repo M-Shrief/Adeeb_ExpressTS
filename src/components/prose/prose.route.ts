@@ -3,7 +3,6 @@ import { body, param, query } from 'express-validator';
 // Controller
 import { ProseController } from './prose.controller';
 // Types
-import { IRoute } from '../../interfaces/route.interface';
 import { ERROR_MSG } from '../../interfaces/prose.interface';
 // middlewares
 import { validate } from '../../middlewares/validate.middleware';
@@ -60,6 +59,4 @@ router.delete(
   ProseController.remove,
 );
 
-export const ProseRoute: IRoute = {
-  router,
-};
+export const ProseRoute = router;

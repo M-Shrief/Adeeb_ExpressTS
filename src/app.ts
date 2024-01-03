@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, Request, Response, Router } from 'express';
 // Config
 import { PORT, CORS_ORIGIN } from './config';
 // Middlewares
@@ -16,14 +16,13 @@ import {
   handleTrustedError,
 } from './utils/errorsCenter/errorHandlers';
 // interfaces
-import { IRoute } from './interfaces/route.interface';
 import { AppError } from './utils/errorsCenter/appError';
 
 export default class App {
   public app: Application;
   public port: string | number;
 
-  constructor(routes: IRoute[]) {
+  constructor(routes: Router[]) {
     this.app = express();
     this.port = PORT || 3000;
     this.initializeMiddlewares();
@@ -56,7 +55,7 @@ export default class App {
     this.app.use(morganMiddleware);
   }
 
-  private initializeRoutes(routes: IRoute[]): void {
+  private initializeRoutes(routes: Router[]): void {
     const apiLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
       max: 1000, // Limit each IP to 1000 requests per `window` (here, per 15 minutes)
@@ -70,8 +69,8 @@ export default class App {
     });
 
     // Apply the rate limiting middleware to API calls only
-    routes.forEach((route) => {
-      this.app.use('/api', apiLimiter, route.router);
+    routes.forEach((router) => {
+      this.app.use('/api', apiLimiter, router);
     });
   }
 

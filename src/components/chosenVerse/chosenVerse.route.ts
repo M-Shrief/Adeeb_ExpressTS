@@ -3,7 +3,6 @@ import { body, query, param } from 'express-validator';
 // Controller
 import { ChosenVerseController } from './chosenVerse.controller';
 // Types
-import { IRoute } from '../../interfaces/route.interface';
 import { ERROR_MSG } from '../../interfaces/chosenVerse.interface';
 // middlewares
 import { validate } from '../../middlewares/validate.middleware';
@@ -74,6 +73,4 @@ router.delete(
   ChosenVerseController.remove,
 );
 
-export const ChosenVerseRoute: IRoute = {
-  router,
-};
+export const ChosenVerseRoute = router;

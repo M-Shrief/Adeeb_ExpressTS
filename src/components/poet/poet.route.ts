@@ -3,7 +3,6 @@ import { body, param } from 'express-validator';
 // PoetController
 import { PoetController } from './poet.controller';
 // Types
-import { IRoute } from '../../interfaces/route.interface';
 import { ERROR_MSG } from '../../interfaces/poet.interface';
 // middlewares
 import { validate } from '../../middlewares/validate.middleware';
@@ -58,6 +57,4 @@ router.delete(
   PoetController.remove,
 );
 
-export const PoetRoute: IRoute = {
-  router,
-};
+export const PoetRoute = router;

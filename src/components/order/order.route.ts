@@ -3,7 +3,6 @@ import { body, param } from 'express-validator';
 // controllers
 import { OrderController } from './order.controller';
 // Types
-import { IRoute } from '../../interfaces/route.interface';
 import { ERROR_MSG } from '../../interfaces/order.interface';
 // middlewares
 import {
@@ -172,6 +171,4 @@ router.delete(
   OrderController.remove,
 );
 
-export const OrderRoute: IRoute = {
-  router,
-};
+export const OrderRoute = router;
