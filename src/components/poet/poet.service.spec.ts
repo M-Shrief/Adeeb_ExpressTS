@@ -182,7 +182,9 @@ describe.concurrent('Testing PoetSerivce', async () => {
     const poet = {name, time_period, bio} as PoetType['details'];
     test('Update poet data successfully after successful validation', async () => {
       vi.spyOn(PoetDB, 'update').mockResolvedValue(poet);
-
+      vi.spyOn(PoetRedis, 'exists').mockResolvedValue(1);
+      vi.spyOn(PoetRedis, 'delete').mockResolvedValue(1);
+      
       const result1 = await PoetService.update('1', { name } as PoetType['details']);
       expect(result1).toEqual(poet);
       const result2 = await PoetService.update('1', { time_period } as PoetType['details']);
@@ -217,6 +219,7 @@ describe.concurrent('Testing PoetSerivce', async () => {
     } as PoetType['details']
     test('Successfully deletes poet', async () => {
       vi.spyOn(PoetDB, 'remove').mockResolvedValue(poet);
+      vi.spyOn(PoetRedis, 'delete').mockResolvedValue(1);
 
       const result1 = await PoetService.remove('1');
       expect(result1).toEqual(poet);
