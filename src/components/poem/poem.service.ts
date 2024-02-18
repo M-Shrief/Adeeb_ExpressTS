@@ -66,12 +66,16 @@ export const PoemService = {
     if (!isValid) return false;
     const newPoem = await PoemDB.update(id, poemData)
     if (!newPoem) return false;
+    if(await PoemRedis.exists(id) != 0) {
+      await PoemRedis.delete(id);
+    }
     return newPoem;
   },
 
   async remove(id: string): Promise<PoemType | false> {
     const poem = await PoemDB.remove(id)
     if (!poem) return false;
+    await PoemRedis.delete(id);
     return poem;
   },
 };

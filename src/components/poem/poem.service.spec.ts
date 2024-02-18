@@ -252,7 +252,8 @@ describe.concurrent('Testing PoemService', async () => {
     let poem = { intro, poet, verses } as PoemType;
     test('Update poem data successfully after validation', async () => {
       vi.spyOn(PoemDB, 'update').mockResolvedValue(poem);
-
+      vi.spyOn(PoemRedis, 'exists').mockResolvedValue(1);
+      vi.spyOn(PoemRedis, 'delete').mockResolvedValue(1);
       const result1 = await PoemService.update('1', { intro } as PoemType);
       expect(result1).toEqual(poem);
       const result2 = await PoemService.update('1', {
@@ -302,6 +303,7 @@ describe.concurrent('Testing PoemService', async () => {
     const poem = { intro, poet, verses } as PoemType;
     test('Successfully deletes poem', async () => {
       vi.spyOn(PoemDB, 'remove').mockResolvedValue(poem);
+      vi.spyOn(PoemRedis, 'delete').mockResolvedValue(1);
 
       const result1 = await PoemService.remove(
         'e7749f21-9cf9-4981-b7a8-2ce262f159f6',
