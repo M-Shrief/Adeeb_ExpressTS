@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import Cache from 'iovalkey'
 // Utils
 import { logger } from './utils/logger';
 // Config
@@ -7,21 +7,15 @@ import { REDIS } from './config';
 
 
 const redisClient = REDIS
-? createClient({
-    // format--> redis[s]://[[username][:password]@][host][:port][/db-number]:
-    url: REDIS,
-  })
-: createClient();
+? new Cache(REDIS)
+: new Cache();
 
 redisClient.on('connect', () => logger.info('Cache is connecting'));
 redisClient.on('ready', () => logger.info('Cache is ready'));
 redisClient.on('end', () => logger.info('Cache disconnected'));
-redisClient.on('reconnecting', (o) => logger.info(`Cache is reconnecting: ${o.attempt} attempts.`));
-redisClient.on('error', (e) => logger.error(e));
+redisClient.on('reconnecting', (o: any) => logger.info(`Cache is reconnecting: ${o.attempt} attempts.`));
+redisClient.on('error', (err) => logger.error(`Cache error: ${err}`));
 
-export const connectRedis = async () => {
-    await redisClient.connect().catch((err) => logger.error(err));
-};
 
 // If the Node process ends, close the Cache connection
 process.on('SIGINT', async () => {

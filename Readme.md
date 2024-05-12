@@ -8,7 +8,7 @@
   - **Nodejs** & **Express.js**
   - Database:
     - **MongoDB** & **Mongoose**
-    - Caching with **Redis**
+    - Caching with ~~Redis~~ **ValKey**
   - **Docker** Containerization
 
 - characteristics:

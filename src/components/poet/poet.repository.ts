@@ -65,7 +65,7 @@ export const PoetRedis = {
   },
   async set(id: string, poet: PoetType): Promise<string | Logger | null> {
     return await redisClient
-      .set(`poet:${id}`, JSON.stringify(poet), { EX: 60 * 15 })
+      .set(`poet:${id}`, JSON.stringify(poet), "EX", 60 * 15 )
       .catch((err) => logger.error(`CacheError: couldn't cache poet:${id}`));
   },
   async exists(id: string): Promise<number> {
