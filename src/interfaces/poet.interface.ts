@@ -1,16 +1,13 @@
 import { ChosenVerseType } from './chosenVerse.interface';
 import { PoemType } from './poem.interface';
 import { ProseType } from './prose.interface';
-import { PoetryType } from './__types__';
 
 export interface PoetType {
-  details: {
-    _id: string;
-    name: string;
-    time_period: string;
-    bio: string;
-    reviewed: boolean;
-  };
+  _id: string;
+  name: string;
+  time_period: string;
+  bio: string;
+  reviewed: boolean;
   poems: PoemType[];
   chosenVerses: ChosenVerseType[];
   proses: ProseType[];
