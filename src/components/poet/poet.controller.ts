@@ -91,8 +91,8 @@ export const PoetController = {
 
 export const responseInfo = {
   index: (
-    poets: PoetType['details'][] | false,
-  ): { status: number; poets?: PoetType['details'][]; errMsg?: string } => {
+    poets: PoetType[] | false,
+  ): { status: number; poets?: PoetType[]; errMsg?: string } => {
     if (!poets) {
       return {
         status: HttpStatusCode.NOT_FOUND,
@@ -110,8 +110,8 @@ export const responseInfo = {
     return { status: HttpStatusCode.OK, poet };
   },
   post: (
-    poet: PoetType['details'] | false,
-  ): { status: number; poet?: PoetType['details']; errMsg?: string } => {
+    poet: PoetType | false,
+  ): { status: number; poet?: PoetType; errMsg?: string } => {
     if (!poet) {
       return {
         status: HttpStatusCode.NOT_ACCEPTABLE,
@@ -121,10 +121,10 @@ export const responseInfo = {
     return { status: HttpStatusCode.CREATED, poet };
   },
   postMany: (
-    poets: { newPoets: PoetType['details'][]; inValidPoets: PoetType['details'][] } | false,
+    poets: { newPoets: PoetType[]; inValidPoets: PoetType[] } | false,
   ): {
     status: number;
-    poets?: { newPoets: PoetType['details'][]; inValidPoets: PoetType['details'][] };
+    poets?: { newPoets: PoetType[]; inValidPoets: PoetType[] };
     errMsg?: string;
   } => {
     if (!poets) {
@@ -135,7 +135,7 @@ export const responseInfo = {
     }
     return { status: HttpStatusCode.CREATED, poets };
   },
-  update: (poet: PoetType['details'] | false): { status: number; errMsg?: string } => {
+  update: (poet: PoetType | false): { status: number; errMsg?: string } => {
     if (!poet) 
       return {
         status: HttpStatusCode.NOT_ACCEPTABLE,
@@ -143,7 +143,7 @@ export const responseInfo = {
       };
     return { status: HttpStatusCode.ACCEPTED };
   },
-  remove: (poet: PoetType['details'] | false): { status: number; errMsg?: string } => {
+  remove: (poet: PoetType | false): { status: number; errMsg?: string } => {
     if (!poet) {
       return { status: HttpStatusCode.NOT_FOUND, errMsg: ERROR_MSG.NOT_FOUND };
     }

@@ -8,7 +8,7 @@ import { createSchema, updateSchema } from './poet.schema';
 import { filterAsync } from '../../utils/asyncFilterAndMap';
 
 export const PoetService = {
-  async getAll(): Promise<PoetType['details'][] | false> {
+  async getAll(): Promise<PoetType[] | false> {
     const poets = await PoetDB.getAll()
     if (poets.length === 0) return false;
     return poets;
@@ -28,8 +28,8 @@ export const PoetService = {
   },
 
   async post(
-    poetData: PoetType['details'],
-  ): Promise<PoetType['details'] | false> {
+    poetData: PoetType,
+  ): Promise<PoetType | false> {
     const isValid = await createSchema.isValid(poetData);
     if (!isValid) return false;
     const newPoet = await PoetDB.post(poetData);
@@ -38,21 +38,21 @@ export const PoetService = {
   },
 
   async postMany(
-    poetsData: PoetType['details'][],
+    poetsData: PoetType[],
   ): Promise<
-    | { newPoets: PoetType['details'][]; inValidPoets: PoetType['details'][] }
+    | { newPoets: PoetType[]; inValidPoets: PoetType[] }
     | false
   > {
-    const isValid = async (poetData: PoetType['details']) =>
+    const isValid = async (poetData: PoetType) =>
       await createSchema.isValid(poetData);
-    const isNotValid = async (poetData: PoetType['details']) =>
+    const isNotValid = async (poetData: PoetType) =>
       (await createSchema.isValid(poetData)) === false;
 
-    const validPoets: PoetType['details'][] = await filterAsync(
+    const validPoets: PoetType[] = await filterAsync(
       poetsData,
       isValid,
     );
-    const inValidPoets: PoetType['details'][] = await filterAsync(
+    const inValidPoets: PoetType[] = await filterAsync(
       poetsData,
       isNotValid,
     );
@@ -66,8 +66,8 @@ export const PoetService = {
 
   async update(
     id: string,
-    poetData: PoetType['details'],
-  ): Promise<PoetType['details'] | false> {
+    poetData: PoetType,
+  ): Promise<PoetType | false> {
     const isValid = await updateSchema.isValid(poetData);
     if (!isValid) return false;
     const newPoet = await PoetDB.update(id, poetData)
@@ -78,7 +78,7 @@ export const PoetService = {
     return newPoet;
   },
 
-  async remove(id: string): Promise<PoetType['details'] | false> {
+  async remove(id: string): Promise<PoetType | false> {
     const poet = await PoetDB.remove(id);
     if (!poet) return false;
     await PoetRedis.delete(id);

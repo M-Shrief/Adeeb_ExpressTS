@@ -28,4 +28,4 @@ const poetSchema = new Schema(
   { timestamps: true },
 );
 
-export const Poet = mongoose.model<PoetType['details']>('Poet', poetSchema);
+export const Poet = mongoose.model<PoetType>('Poet', poetSchema);
