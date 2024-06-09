@@ -2,36 +2,91 @@
 import redisClient from '../../redis';
 // Models
 import { Poet } from './poet.model';
-import { Poem } from '../poem/poem.model';
-import { ChosenVerse } from '../chosenVerse/chosenVerse.model';
-import { Prose } from '../prose/prose.model';
 // Types
 import { PoetType } from '../../interfaces/poet.interface';
 import { Logger } from 'winston';
 // Utils
 import { logger } from '../../utils/logger';
+import { Types } from 'mongoose';
 
 export const PoetDB = {
-  async getAll(): Promise<PoetType['details'][]> {
+  async getAll(): Promise<PoetType[]> {
     return await Poet.find({}, { name: 1, time_period: 1 });
   },
 
   async getOneWithLiterature(id: string): Promise<PoetType | null> {
-    const [details, poems, proses, chosenVerses] = await Promise.all([
-      Poet.findById(id, { name: 1, bio: 1, time_period: 1 }),
-      Poem.find({ poet: id }, { intro: 1, reviewed: 1 }),
-      Prose.find({ poet: id }, { tags: 1, qoute: 1 }),
-      ChosenVerse.find(
-        { poet: id },
-        { reviewed: 1, tags: 1, verses: 1, poem: 1 },
-      ),
-    ]);
-    // check if Poet exists, not checking for his Poems,... because it'll be an empty Array.
-    if (!details) return null;
-    return  { details, poems, proses, chosenVerses };
+    const poet =  await Poet.aggregate<PoetType>([
+      {
+        $match: { _id: new Types.ObjectId(id) },
+      },
+      {
+        $unset: [
+          "reviewed",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      {
+        $lookup: {
+          from: "poems",
+          localField: "_id",
+          foreignField: "poet",
+          as: "poems",
+          pipeline: [
+            {
+              $unset: [
+                "poet",
+                "verses",
+                "reviewed",
+                "createdAt",
+                "updatedAt"
+              ]
+            },      
+          ]
+        },
+      },
+      {
+        $lookup: {
+          from: "proses",
+          localField: "_id",
+          foreignField: "poet",
+          as: "proses",
+          pipeline: [
+            {
+              $unset: [
+                "poet",
+                "reviewed",
+                "createdAt",
+                "updatedAt"
+              ]
+            },      
+          ]        
+        },
+      },
+      {
+        $lookup: {
+          from: "chosenverses",
+          localField: "_id",
+          foreignField: "poet",
+          as: "chosenVerses",
+          pipeline: [
+            {
+              $unset: [
+                "poet",
+                "reviewed",
+                "createdAt",
+                "updatedAt"
+              ]
+            },      
+          ]       
+        },
+      },
+    ])
+    if(poet.length == 0) return null
+    return poet[0]
   },
 
-  async post(poetData: PoetType['details']): Promise<PoetType['details']> {
+  async post(poetData: PoetType): Promise<PoetType> {
     const poet = new Poet({
       name: poetData.name,
       time_period: poetData.time_period,
@@ -42,19 +97,19 @@ export const PoetDB = {
   },
 
   async postMany(
-    poetsData: PoetType['details'][],
-  ): Promise<PoetType['details'][]> {
+    poetsData: PoetType[],
+  ): Promise<PoetType[]> {
     return await Poet.insertMany(poetsData);
   },
 
   async update(
     _id: string,
-    poetData: PoetType['details'],
-  ): Promise<PoetType['details'] | null> {
+    poetData: PoetType,
+  ): Promise<PoetType | null> {
     return await Poet.findByIdAndUpdate(_id, { $set: poetData });
   },
 
-  async remove(id: string): Promise<PoetType['details'] | null> {
+  async remove(id: string): Promise<PoetType | null> {
     return await Poet.findByIdAndRemove(id);
   },
 };
