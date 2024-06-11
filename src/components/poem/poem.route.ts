@@ -10,18 +10,17 @@ import { setCache } from '../../middlewares/cache.middleware';
 
 const router: Router = Router();
 router.get('/poems', setCache, PoemController.indexWithPoetName);
-router.get('/poems_intros', setCache, PoemController.indexIntrosWithPoetName);
 router.get(
-  '/poem/:id',
+  '/poems/:id',
   [
     validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
     setCache,
   ],
   PoemController.indexOneWithPoet,
 );
-router.post('/poems', PoemController.postMany);
+router.post('/poems/many', PoemController.postMany);
 router.post(
-  '/poem',
+  '/poems',
   validate([
     body('intro', ERROR_MSG.INTRO).isString().escape(),
 
@@ -37,7 +36,7 @@ router.post(
   PoemController.post,
 );
 router.put(
-  '/poem/:id',
+  '/poems/:id',
   validate([
     param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
@@ -63,7 +62,7 @@ router.put(
 );
 
 router.delete(
-  '/poem/:id',
+  '/poems/:id',
   validate([
     param('id', ERROR_MSG.NOT_FOUND).optional().isMongoId(),
   ]),

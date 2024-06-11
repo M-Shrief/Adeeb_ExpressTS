@@ -23,22 +23,6 @@ export const PoemController = {
     }
   },
 
-  indexIntrosWithPoetName: async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
-    try {
-      const service = await PoemService.getAllIntrosWithPoetName();
-      const { status, poems, errMsg } =
-        responseInfo.indexIntrosWithPoetName(service);
-      if (errMsg) throw new AppError(status, errMsg, true);
-      res.status(HttpStatusCode.OK).send(poems);
-    } catch (error) {
-      next(error);
-    }
-  },
-
   indexOneWithPoet: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const service = await PoemService.getOneWithPoet(req.params.id);

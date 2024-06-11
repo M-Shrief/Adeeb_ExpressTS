@@ -12,16 +12,15 @@ const router: Router = Router();
 
 router.get('/poets', setCache, PoetController.index);
 router.get(
-  '/poet/:id',
+  '/poets/:id',
   [
     validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
     setCache,
   ],
   PoetController.indexOneWithLiterature,
 );
-router.post('/poets', PoetController.postMany);
 router.post(
-  '/poet',
+  '/poets',
   validate([
     body('name', ERROR_MSG.NAME).isString().escape(),
 
@@ -33,8 +32,9 @@ router.post(
   ]),
   PoetController.post,
 );
+router.post('/poets/many', PoetController.postMany);
 router.put(
-  '/poet/:id',
+  '/poets/:id',
   validate([
     param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
@@ -52,7 +52,7 @@ router.put(
   PoetController.update,
 );
 router.delete(
-  '/poet/:id',
+  '/poets/:id',
   validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   PoetController.remove,
 );

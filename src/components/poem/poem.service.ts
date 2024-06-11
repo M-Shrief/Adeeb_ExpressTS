@@ -14,12 +14,6 @@ export const PoemService = {
     return poems;
   },
 
-  async getAllIntrosWithPoetName(): Promise<PoemType[] | false> {
-    const poems = await PoemDB.getAllIntrosWithPoetName()
-    if (poems.length === 0) return false;
-    return poems;
-  },
-
   async getOneWithPoet(id: string): Promise<PoemType | false> {
     let poem: PoemType | null;
 

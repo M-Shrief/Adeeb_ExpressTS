@@ -17,13 +17,13 @@ router.get(
   ChosenVerseController.indexRandomWithPoetName,
 );
 router.get(
-  '/chosenverse/:id',
+  '/chosenverses/:id',
   validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   ChosenVerseController.indexOneWithPoetName,
 );
-router.post('/chosenverses', ChosenVerseController.postMany);
+router.post('/chosenverses/many', ChosenVerseController.postMany);
 router.post(
-  '/chosenverse',
+  '/chosenverses',
   validate([
     body('poet', ERROR_MSG.POET).isMongoId(),
 
@@ -41,7 +41,7 @@ router.post(
 router.post('/chosenverses', ChosenVerseController.postMany);
 
 router.put(
-  '/chosenverse/:id',
+  '/chosenverses/:id',
   validate([
     param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
@@ -68,7 +68,7 @@ router.put(
   ChosenVerseController.update,
 );
 router.delete(
-  '/chosenverse/:id',
+  '/chosenverses/:id',
   validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   ChosenVerseController.remove,
 );
