@@ -6,7 +6,7 @@ import { OrderType } from '../../interfaces/order.interface';
 export const OrderDB = {
   async getGuestOrders(name: string, phone: string): Promise<OrderType[]> {
     return await Order.find(
-      { name, phone },
+      { name, phone, partner: null },
       {
         name: 1,
         phone: 1,
