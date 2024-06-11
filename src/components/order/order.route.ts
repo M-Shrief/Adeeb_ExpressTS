@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 // controllers
 import { OrderController } from './order.controller';
 // Types
@@ -11,22 +11,11 @@ import {
   authErrorHandler,
 } from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validate.middleware';
-import { setCache } from '../../middlewares/cache.middleware';
 
 const router: Router = Router();
 
-router.post(
+router.get(
   '/orders/guest',
-  [
-    validate([
-      body('name', ERROR_MSG.NAME).isString().escape(),
-      body('phone', ERROR_MSG.PHONE)
-        .isString()
-        .escape()
-        // .isMobilePhone('any'),
-    ]),
-    setCache,
-  ],
   OrderController.indexGuestOrders,
 );
 
@@ -41,7 +30,7 @@ router.get(
 );
 
 router.post(
-  '/order/guest',
+  '/orders/guest',
   [
     validate([
       body('name', ERROR_MSG.NAME).isString().escape(),
@@ -81,7 +70,7 @@ router.post(
 );
 
 router.post(
-  '/order/partner',
+  '/orders/partner',
   [
     jwtToken(true),
     guard.check(['partner:read', 'partner:write']),
@@ -121,7 +110,7 @@ router.post(
 );
 
 router.put(
-  '/order/:id',
+  '/orders/:id',
   validate([
     param('id', ERROR_MSG.NOT_FOUND).isMongoId(),
 
@@ -166,7 +155,7 @@ router.put(
 );
 
 router.delete(
-  '/order/:id',
+  '/orders/:id',
   validate([param('id', ERROR_MSG.NOT_FOUND).isMongoId()]),
   OrderController.remove,
 );

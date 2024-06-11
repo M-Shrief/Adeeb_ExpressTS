@@ -13,8 +13,8 @@ export const OrderController = {
   indexGuestOrders: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const service = await OrderService.getGuestOrders(
-        req.body.name as string,
-        req.body.phone as string,
+        req.query.name as string,
+        req.query.phone as string,
       );
       const { status, orders, errMsg } = responseInfo.indexOrders(service);
       if (errMsg) throw new AppError(status, errMsg, true);
