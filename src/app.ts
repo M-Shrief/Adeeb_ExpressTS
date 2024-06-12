@@ -75,7 +75,7 @@ export default class App {
   }
 
   private initializeErrorHandling() {
-    // if error is not operational/trusted/known we shall exit then use PM2 to restart.
+    // if error is not operational/trusted/known we shall exit then restart.
     process.on('unhandledRejection', (reason: Error) => {
       throw reason;
     });
