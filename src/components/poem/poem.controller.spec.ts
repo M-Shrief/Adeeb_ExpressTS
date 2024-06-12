@@ -13,7 +13,7 @@ describe.concurrent("Testing PoemController's responseInfo", async () => {
         "poet": {
           "_id": "6371ea89885e286801faccaa",
           "name": "التهامي"
-        } as PoetType['details'],
+        } as PoetType,
         "verses": [
           {
             "first": "حُكــمُ المَنِيَّـةِ فـي البَرِيَّـةِ جـاري",
@@ -32,7 +32,7 @@ describe.concurrent("Testing PoemController's responseInfo", async () => {
         "poet": {
           "_id": "6371ea89885e286801faccaa",
           "name": "التهامي"
-        } as PoetType['details'],
+        } as PoetType,
         "verses": [
           {
             "first": "حُكــمُ المَنِيَّـةِ فـي البَرِيَّـةِ جـاري",
@@ -59,44 +59,7 @@ describe.concurrent("Testing PoemController's responseInfo", async () => {
       expect(poems).toBeUndefined();
     });
   });
-
-  describe('Testing indexIntrosWithPoetName()', async () => {
-    const service = [
-      {
-        "_id": "6371eb6690c2ad965846c221",
-        "intro": "حُكمُ المَنِيَّةِ في البَرِيَّةِ جاري",
-        "poet": {
-          "_id": "6371ea89885e286801faccaa",
-          "name": "التهامي"
-        },
-        "reviewed": true
-      },
-      {
-        "_id": "6371eb9890c2ad965846c27d",
-        "intro": "حَكِّم سُيوفَكَ في رِقابِ العُذَّلِ",
-        "poet": {
-          "_id": "6371e9ce885e286801facca2",
-          "name": "عنترة بن شداد"
-        },
-        "reviewed": true
-      },
-    ] as PoemType[];
-    test('Success, return poems with status: ok', async () => {
-      const { status, poems, errMsg } =
-        responseInfo.indexIntrosWithPoetName(service);
-      expect(status).toEqual(HttpStatusCode.OK);
-      expect(poems).toStrictEqual(service);
-      expect(errMsg).toBeUndefined();
-    });
-    test('Error, return errMsg: NOT_FOUND with status: Not_Found', async () => {
-      const { status, poems, errMsg } =
-        responseInfo.indexIntrosWithPoetName(false);
-      expect(status).toEqual(HttpStatusCode.NOT_FOUND);
-      expect(errMsg).toStrictEqual(ERROR_MSG.NOT_AVAILABLE);
-      expect(poems).toBeUndefined();
-    });
-  });
-
+  
   describe('Testing indexOneWithPoet()', async () => {
     const service = {
       "_id": "6371eb6690c2ad965846c221",
@@ -106,7 +69,7 @@ describe.concurrent("Testing PoemController's responseInfo", async () => {
         "name": "التهامي",
         "time_period": "العصر العباسي",
         "bio": "أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال"
-      } as PoetType['details'],
+      } as PoetType,
       "verses": [
         {
           "first": "حُكــمُ المَنِيَّـةِ فـي البَرِيَّـةِ جـاري",

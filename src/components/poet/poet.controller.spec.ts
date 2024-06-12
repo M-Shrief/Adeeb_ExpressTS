@@ -22,7 +22,7 @@ describe.concurrent("Testinf PoetTypeController's responseInfo", async () => {
             "name": "امرؤ القيس",
             "time_period": "العصر الجاهلي"
         },
-    ] as PoetType['details'][];
+    ] as PoetType[];
     test('Success, return poets with status: ok', async () => {
       const { status, poets, errMsg } = responseInfo.index(service);
       expect(status).toEqual(HttpStatusCode.OK);
@@ -39,12 +39,10 @@ describe.concurrent("Testinf PoetTypeController's responseInfo", async () => {
 
   describe('Testing indexOneWithLiterature()', async () => {
     const poetWithLiterature = {
-        "details": {
-          "_id": "639b5cf712eec0bb274cecd4",
-          "name": "محمود شاكر (أبو فهر)",
-          "time_period": "القرن العشرين",
-          "bio": "رزق عقل الشافعي، وعبقرية الخليل، ولسان ابن حزم، وشجاعة ابن تيمية، وبهذه الأمور الأربعة مجتمعة حصَّل من المعارف والعلوم العربية ما لم يحصله أحد من أبناء جيله، ثم خاض تلك المعارك الحامية: فحارب الدعوة إلى العامية، وحارب الدعوة إلى كتابة اللغة العربية بالحروف اللاتينية، وحارب الدعوة إلى هلهلة اللغة العربية، والعبث بها بحجة التطور اللغوي، ثم حارب من قبل ومن بعد: الخرافات والبدع والشعوذة التي ابتعدت بالمسلمين عن منهج السلف، في صحة العقيدة، وفي تجريد الإيمان من شوائب الشرك الظاهر والباطن",
-        },
+        "_id": "639b5cf712eec0bb274cecd4",
+        "name": "محمود شاكر (أبو فهر)",
+        "time_period": "القرن العشرين",
+        "bio": "رزق عقل الشافعي، وعبقرية الخليل، ولسان ابن حزم، وشجاعة ابن تيمية، وبهذه الأمور الأربعة مجتمعة حصَّل من المعارف والعلوم العربية ما لم يحصله أحد من أبناء جيله، ثم خاض تلك المعارك الحامية: فحارب الدعوة إلى العامية، وحارب الدعوة إلى كتابة اللغة العربية بالحروف اللاتينية، وحارب الدعوة إلى هلهلة اللغة العربية، والعبث بها بحجة التطور اللغوي، ثم حارب من قبل ومن بعد: الخرافات والبدع والشعوذة التي ابتعدت بالمسلمين عن منهج السلف، في صحة العقيدة، وفي تجريد الإيمان من شوائب الشرك الظاهر والباطن",
         "poems": [
           {
             "_id": "639c7bf9b95190b2fdf1527a",
@@ -101,7 +99,7 @@ describe.concurrent("Testinf PoetTypeController's responseInfo", async () => {
         "_id": "639b5cf712eec0bb274cecd4",
         name: 'عنترة بن شداد',
         time_period: 'جاهلي',
-    } as PoetType['details'];
+    } as PoetType;
     test('Success, saved abd return poet with status: ok', async () => {
       const { status, poet, errMsg } = responseInfo.post(service);
       expect(status).toEqual(HttpStatusCode.CREATED);
@@ -124,13 +122,13 @@ describe.concurrent("Testinf PoetTypeController's responseInfo", async () => {
             name: 'عنترة بن شداد',
           time_period: 'جاهلي',
         },
-      ] as PoetType['details'][],
+      ] as PoetType[],
       inValidPoets: [
         {
             "_id": "639b5cf712eec0bb274cecd4",
             name: 'عنترة بن شداد',
         },
-      ] as PoetType['details'][],
+      ] as PoetType[],
     };
     test('Success, saved abd return poet with status: ok', async () => {
       const { status, poets, errMsg } = responseInfo.postMany(service);
@@ -152,7 +150,7 @@ describe.concurrent("Testinf PoetTypeController's responseInfo", async () => {
         "name": "محمود شاكر (أبو فهر)",
         "time_period": "القرن العشرين",
         "bio": "رزق عقل الشافعي، وعبقرية الخليل، ولسان ابن حزم، وشجاعة ابن تيمية، وبهذه الأمور الأربعة مجتمعة حصَّل من المعارف والعلوم العربية ما لم يحصله أحد من أبناء جيله، ثم خاض تلك المعارك الحامية: فحارب الدعوة إلى العامية، وحارب الدعوة إلى كتابة اللغة العربية بالحروف اللاتينية، وحارب الدعوة إلى هلهلة اللغة العربية، والعبث بها بحجة التطور اللغوي، ثم حارب من قبل ومن بعد: الخرافات والبدع والشعوذة التي ابتعدت بالمسلمين عن منهج السلف، في صحة العقيدة، وفي تجريد الإيمان من شوائب الشرك الظاهر والباطن",
-    } as PoetType['details']
+    } as PoetType
 
     test('Updates poet successfully', async () => {
       const { status, errMsg } = responseInfo.update(poet);
@@ -172,7 +170,7 @@ describe.concurrent("Testinf PoetTypeController's responseInfo", async () => {
         "name": "محمود شاكر (أبو فهر)",
         "time_period": "القرن العشرين",
         "bio": "رزق عقل الشافعي، وعبقرية الخليل، ولسان ابن حزم، وشجاعة ابن تيمية، وبهذه الأمور الأربعة مجتمعة حصَّل من المعارف والعلوم العربية ما لم يحصله أحد من أبناء جيله، ثم خاض تلك المعارك الحامية: فحارب الدعوة إلى العامية، وحارب الدعوة إلى كتابة اللغة العربية بالحروف اللاتينية، وحارب الدعوة إلى هلهلة اللغة العربية، والعبث بها بحجة التطور اللغوي، ثم حارب من قبل ومن بعد: الخرافات والبدع والشعوذة التي ابتعدت بالمسلمين عن منهج السلف، في صحة العقيدة، وفي تجريد الإيمان من شوائب الشرك الظاهر والباطن",
-    } as PoetType['details']
+    } as PoetType
     test('Removes poet successfully', async () => {
       const { status, errMsg } = responseInfo.remove(poet);
       expect(status).toEqual(HttpStatusCode.ACCEPTED);

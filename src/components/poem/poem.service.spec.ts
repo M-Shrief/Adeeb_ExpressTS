@@ -42,7 +42,7 @@ describe.concurrent('Testing PoemService', async () => {
         poet: {
           _id: '6371ea89885e286801faccaa',
           name: 'التهامي',
-        } as PoetType['details'],
+        } as PoetType,
         verses: [
           {
             first: 'حُكــمُ المَنِيَّـةِ فـي البَرِيَّـةِ جـاري',
@@ -74,38 +74,6 @@ describe.concurrent('Testing PoemService', async () => {
     });
   });
 
-  describe('Testing getAllIntrosWithPoetName()', async () => {
-    const poems = [
-      {
-        _id: '6371eb6690c2ad965846c221',
-        intro: 'حُكمُ المَنِيَّةِ في البَرِيَّةِ جاري',
-        poet: {
-          _id: '6371ea89885e286801faccaa',
-          name: 'التهامي',
-        },
-        reviewed: true,
-      },
-      {
-        _id: '6371eb9890c2ad965846c27d',
-        intro: 'حَكِّم سُيوفَكَ في رِقابِ العُذَّلِ',
-        poet: {
-          _id: '6371e9ce885e286801facca2',
-          name: 'عنترة بن شداد',
-        },
-        reviewed: true,
-      },
-    ] as PoemType[];
-    test('Gets data successfully from database', async () => {
-      vi.spyOn(PoemDB, 'getAllIntrosWithPoetName').mockResolvedValue(poems);
-      const result = await PoemService.getAllIntrosWithPoetName();
-      expect(result).toStrictEqual(poems);
-    });
-    test('Returns false if not data is avalaible', async () => {
-      vi.spyOn(PoemDB, 'getAllIntrosWithPoetName').mockResolvedValue([]);
-      const result = await PoemService.getAllIntrosWithPoetName();
-      expect(result).toEqual(false);
-    });
-  });
 
   describe('Testing getOneWithPoet()', async () => {
     const poem = {
@@ -116,7 +84,7 @@ describe.concurrent('Testing PoemService', async () => {
         name: 'التهامي',
         time_period: 'العصر العباسي',
         bio: 'أبو الحسن علي بن محمد بن فهد التهامي. من كبار شعراء العرب، نعته الذهبي بشاعر وقته. مولده ومنشؤه في اليمن، وأصله من أهل مكة، كان يكتم نسبه، فينتسب مرة للعلوية وأخرى لبني أمية. وانتحل مذهب الاعتزال',
-      } as PoetType['details'],
+      } as PoetType,
       verses: [
         {
           first: 'حُكــمُ المَنِيَّـةِ فـي البَرِيَّـةِ جـاري',

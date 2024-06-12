@@ -25,7 +25,7 @@ describe.concurrent('Testing PoetSerivce', async () => {
             "name": "امرؤ القيس",
             "time_period": "العصر الجاهلي"
         },
-    ] as PoetType['details'][];
+    ] as PoetType[];
     test('Gets data successfully from Database', async () => {
       vi.spyOn(PoetDB, 'getAll').mockResolvedValue(poets);
 
@@ -124,7 +124,7 @@ describe.concurrent('Testing PoetSerivce', async () => {
       bio =
         'عنترة بن عمرو بن شداد بن معاوية بن قراد العبسي (525 م - 608 م) هو أحد أشهر شعراء العرب في فترة ما قبل الإسلام، اشتهر بشعر الفروسية، وله معلقة مشهورة. وهو أشهر فرسان العرب وأشعرهم وشاعر المعلقات والمعروف بشعره الجميل وغزله العفيف بعبلة.';
 
-    const poet = { name, time_period, bio } as PoetType['details'];
+    const poet = { name, time_period, bio } as PoetType;
     test('Post data successfully after validation', async () => {
       vi.spyOn(PoetDB, 'post').mockResolvedValue(poet);
 
@@ -134,11 +134,11 @@ describe.concurrent('Testing PoetSerivce', async () => {
     test('Return false if data validation failed', async () => {
       vi.spyOn(PoetDB, 'post').mockResolvedValue(poet);
 
-      const result1 = await PoetService.post({ name, time_period } as PoetType['details']);
+      const result1 = await PoetService.post({ name, time_period } as PoetType);
       expect(result1).toEqual(false);
-      const result2 = await PoetService.post({ name, bio } as PoetType['details']);
+      const result2 = await PoetService.post({ name, bio } as PoetType);
       expect(result2).toEqual(false);
-      const result3 = await PoetService.post({ time_period, bio } as PoetType['details']);
+      const result3 = await PoetService.post({ time_period, bio } as PoetType);
       expect(result3).toEqual(false);
     });
   });
@@ -149,12 +149,12 @@ describe.concurrent('Testing PoetSerivce', async () => {
       bio =
         'عنترة بن عمرو بن شداد بن معاوية بن قراد العبسي (525 م - 608 م) هو أحد أشهر شعراء العرب في فترة ما قبل الإسلام، اشتهر بشعر الفروسية، وله معلقة مشهورة. وهو أشهر فرسان العرب وأشعرهم وشاعر المعلقات والمعروف بشعره الجميل وغزله العفيف بعبلة.';
 
-    const poet1 = { name, time_period, bio } as PoetType['details'];
-    const poet2 = { name, time_period, bio } as PoetType['details'];
-    const poet3 = { name, time_period, bio } as PoetType['details'];
-    const poet4 = { name, time_period } as PoetType['details'];
-    const poet5 = { name, bio } as PoetType['details'];
-    const poet6 = { time_period, bio } as PoetType['details'];
+    const poet1 = { name, time_period, bio } as PoetType;
+    const poet2 = { name, time_period, bio } as PoetType;
+    const poet3 = { name, time_period, bio } as PoetType;
+    const poet4 = { name, time_period } as PoetType;
+    const poet5 = { name, bio } as PoetType;
+    const poet6 = { time_period, bio } as PoetType;
     test('Post valid data successfully after validation and return inValid ones', async () => {
       vi.spyOn(PoetDB, 'postMany').mockResolvedValue([poet1, poet2, poet3]);
 
@@ -179,33 +179,33 @@ describe.concurrent('Testing PoetSerivce', async () => {
       time_period = 'جاهلي',
       bio =
         'عنترة بن عمرو بن شداد بن معاوية بن قراد العبسي (525 م - 608 م) هو أحد أشهر شعراء العرب في فترة ما قبل الإسلام، اشتهر بشعر الفروسية، وله معلقة مشهورة. وهو أشهر فرسان العرب وأشعرهم وشاعر المعلقات والمعروف بشعره الجميل وغزله العفيف بعبلة.';
-    const poet = {name, time_period, bio} as PoetType['details'];
+    const poet = {name, time_period, bio} as PoetType;
     test('Update poet data successfully after successful validation', async () => {
       vi.spyOn(PoetDB, 'update').mockResolvedValue(poet);
       vi.spyOn(PoetRedis, 'exists').mockResolvedValue(1);
       vi.spyOn(PoetRedis, 'delete').mockResolvedValue(1);
       
-      const result1 = await PoetService.update('1', { name } as PoetType['details']);
+      const result1 = await PoetService.update('1', { name } as PoetType);
       expect(result1).toEqual(poet);
-      const result2 = await PoetService.update('1', { time_period } as PoetType['details']);
+      const result2 = await PoetService.update('1', { time_period } as PoetType);
       expect(result2).toEqual(poet);
-      const result3 = await PoetService.update('1', { bio } as PoetType['details']);
+      const result3 = await PoetService.update('1', { bio } as PoetType);
       expect(result3).toEqual(poet);
     });
     test('return false after invalid poetData', async () => {
-      vi.spyOn(PoetDB, 'update').mockResolvedValue({name, time_period, bio} as PoetType['details']);
+      vi.spyOn(PoetDB, 'update').mockResolvedValue({name, time_period, bio} as PoetType);
 
-      const result1 = await PoetService.update('1', { name: 'sa' } as PoetType['details']);
+      const result1 = await PoetService.update('1', { name: 'sa' } as PoetType);
       expect(result1).toEqual(false);
-      const result2 = await PoetService.update('1', {time_period: 'عثماني ' } as PoetType['details']);
+      const result2 = await PoetService.update('1', {time_period: 'عثماني ' } as PoetType);
       expect(result2).toEqual(false);
-      const result3 = await PoetService.update('1', { bio: 'sds' } as PoetType['details']);
+      const result3 = await PoetService.update('1', { bio: 'sds' } as PoetType);
       expect(result3).toEqual(false);
     });
     test('return false after non-existing id', async () => {
       vi.spyOn(PoetDB, 'update').mockResolvedValue(null);
 
-      const result1 = await PoetService.update('1', { name } as PoetType['details']);
+      const result1 = await PoetService.update('1', { name } as PoetType);
       expect(result1).toEqual(false);
     });
   });
@@ -216,7 +216,7 @@ describe.concurrent('Testing PoetSerivce', async () => {
         "name": "محمود شاكر (أبو فهر)",
         "time_period": "القرن العشرين",
         "bio": "رزق عقل الشافعي، وعبقرية الخليل، ولسان ابن حزم، وشجاعة ابن تيمية، وبهذه الأمور الأربعة مجتمعة حصَّل من المعارف والعلوم العربية ما لم يحصله أحد من أبناء جيله، ثم خاض تلك المعارك الحامية: فحارب الدعوة إلى العامية، وحارب الدعوة إلى كتابة اللغة العربية بالحروف اللاتينية، وحارب الدعوة إلى هلهلة اللغة العربية، والعبث بها بحجة التطور اللغوي، ثم حارب من قبل ومن بعد: الخرافات والبدع والشعوذة التي ابتعدت بالمسلمين عن منهج السلف، في صحة العقيدة، وفي تجريد الإيمان من شوائب الشرك الظاهر والباطن",
-    } as PoetType['details']
+    } as PoetType
     test('Successfully deletes poet', async () => {
       vi.spyOn(PoetDB, 'remove').mockResolvedValue(poet);
       vi.spyOn(PoetRedis, 'delete').mockResolvedValue(1);
