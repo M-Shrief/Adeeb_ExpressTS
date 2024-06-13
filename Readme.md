@@ -1,6 +1,6 @@
 # REST API for "Adeeb أديب", using Express with TypeScript
-
-**Overview**: It's concerned with Arabic literature. It assumes a business model that enables you to order a specific piece of literature to be printed with especial colors and font. Then it'll be delivered to the customer, with the ability for the customer to follow up the process. And for special customers, it provides them with the ability to make bulk orders fast and easy. And if they’re willing to signup, they can review all of their past orders.
+E-Commerce's  REST API backend for printing Arabic literature.
+## Overview:
 
 - Tech stack:
 
@@ -16,7 +16,7 @@
   - Regression tests with Vitest.
   - CI using Github actions testing
   - JWT Authentication & Authorization
-  - Centralized Error Handling
+  - Error Handling
   - Data Validation with Yup and express-validator
   - Security best practices from OWASP
   - …and more
