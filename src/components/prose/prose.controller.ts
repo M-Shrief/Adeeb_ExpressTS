@@ -4,7 +4,7 @@ import { ProseService } from './prose.service';
 // Types
 import { ERROR_MSG, ProseType } from '../../interfaces/prose.interface';
 // Utils
-import { AppError } from '../../utils/errorsCenter/appError';
+import { AppError } from '../../utils/errors';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 export const ProseController = {

@@ -4,7 +4,7 @@ import { PoetService } from './poet.service';
 // Types
 import { PoetType, ERROR_MSG } from '../../interfaces/poet.interface';
 // Utils
-import { AppError } from '../../utils/errorsCenter/appError';
+import { AppError } from '../../utils/errors';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 export const PoetController = {

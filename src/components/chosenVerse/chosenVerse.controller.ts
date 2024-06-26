@@ -7,7 +7,7 @@ import {
   ERROR_MSG,
 } from '../../interfaces/chosenVerse.interface';
 // Utils
-import { AppError } from '../../utils/errorsCenter/appError';
+import { AppError } from '../../utils/errors';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 export const ChosenVerseController = {

@@ -1,9 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/errorsCenter/appError';
-import {
-  handleTrustedError,
-  isTrustedError,
-} from '../utils/errorsCenter/errorHandlers';
+import { AppError, handleTrustedError, isTrustedError } from '../utils/errors';
 
 export const errorMiddleware = async (
   err: AppError,

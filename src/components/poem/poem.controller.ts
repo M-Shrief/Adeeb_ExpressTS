@@ -4,7 +4,7 @@ import { PoemService } from './poem.service';
 // Types
 import { PoemType, ERROR_MSG } from '../../interfaces/poem.interface';
 // Utils
-import { AppError } from '../../utils/errorsCenter/appError';
+import { AppError } from '../../utils/errors';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 export const PoemController = {

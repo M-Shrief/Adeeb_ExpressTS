@@ -6,7 +6,7 @@ import { PartnerService } from './partner.service';
 import { ERROR_MSG, PartnerType } from '../../interfaces/partner.interface';
 // Utils
 import { decodeToken, signToken } from '../../utils/auth';
-import { AppError } from '../../utils/errorsCenter/appError';
+import { AppError } from '../../utils/errors';
 import HttpStatusCode from '../../utils/httpStatusCode';
 
 const signTokenFn = (name: string, _id: string) =>

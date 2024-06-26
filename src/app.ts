@@ -14,9 +14,8 @@ import { logger } from './utils/logger';
 import {
   isTrustedError,
   handleTrustedError,
-} from './utils/errorsCenter/errorHandlers';
-// interfaces
-import { AppError } from './utils/errorsCenter/appError';
+  AppError 
+} from './utils/errors';
 
 export default class App {
   public app: Application;

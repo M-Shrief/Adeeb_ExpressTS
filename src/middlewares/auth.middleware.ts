@@ -3,7 +3,7 @@ import { expressjwt } from 'express-jwt';
 import guardFactory from 'express-jwt-permissions';
 // Utils
 import HttpStatusCode from '../utils/httpStatusCode';
-import { AppError } from '../utils/errorsCenter/appError';
+import { AppError } from '../utils/errors';
 // Config
 import { JWT_PRIVATE } from '../config';
 
